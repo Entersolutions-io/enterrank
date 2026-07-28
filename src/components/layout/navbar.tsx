@@ -25,7 +25,7 @@ export function Navbar() {
   const links = [
     { href: "/#pillars", label: t("Product", "Proizvod") },
     { href: "/#demo", label: t("Live demo", "Demo uživo") },
-    { href: "/#pricing", label: t("Pricing", "Cijene") },
+    { href: "/#contact", label: t("Contact", "Kontakt") },
     { href: "/docs", label: t("Docs", "Dokumentacija") },
   ];
 

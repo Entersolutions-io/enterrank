@@ -17,7 +17,7 @@ export function Footer() {
         { href: "/app/reviews", label: t("Reviews", "Recenzije") },
         { href: "/app/rankings", label: t("Rankings", "Rangiranje") },
         { href: "/app/ai-visibility", label: t("AI Visibility", "AI vidljivost") },
-        { href: "/#pricing", label: t("Pricing", "Cijene") },
+        { href: "/#contact", label: t("Request a quote", "Zatražite ponudu") },
       ],
     },
     {

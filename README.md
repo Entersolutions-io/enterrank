@@ -63,7 +63,7 @@ because a business that ranks well and never replies to a one-star review still 
 ```
 src/
 ├─ app/
-│  ├─ page.tsx              Marketing site — hero, live grid demo, pillars, AEO section, pricing
+│  ├─ page.tsx              Marketing site — hero, live grid demo, pillars, AEO section, contact
 │  ├─ app/                  The product: dashboard, reviews, rankings, ai-visibility, presence,
 │  │                        competitors, brand-voice, settings
 │  ├─ api/v1/               Public REST API — real route handlers over the sample dataset
@@ -92,6 +92,10 @@ across the grid lands on the keyword's declared average. The table and the map c
 **The reply composer never publishes on its own.** Replies below the configured star threshold, and
 any review where sentiment confidence is under 75%, always wait for a human. A misread complaint
 answered cheerfully is worse than a late reply.
+
+**No price list.** What a workspace costs depends on locations, tracked terms and scan frequency,
+so the site routes to a quote request rather than publishing a table that would be wrong for most
+visitors. `/api/v1/contact` validates enquiries for real and returns `202` like every other write.
 
 **No photographs of people.** Reviewer identities in the sample data are fictional, so the UI renders
 initials avatars rather than invented faces.

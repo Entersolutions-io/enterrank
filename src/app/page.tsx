@@ -1,11 +1,10 @@
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
 import { AiSection } from "@/components/marketing/ai-section";
-import { Cta } from "@/components/marketing/cta";
+import { Contact } from "@/components/marketing/contact";
 import { GridDemo } from "@/components/marketing/grid-demo";
 import { Hero } from "@/components/marketing/hero";
 import { Pillars } from "@/components/marketing/pillars";
-import { Pricing } from "@/components/marketing/pricing";
 
 export default function HomePage() {
   return (
@@ -17,8 +16,7 @@ export default function HomePage() {
         <GridDemo />
         <Pillars />
         <AiSection />
-        <Pricing />
-        <Cta />
+        <Contact />
       </main>
       <Footer />
     </>

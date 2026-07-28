@@ -399,6 +399,29 @@ export default function ApiReferencePage() {
 }`}
         />
 
+        <Endpoint
+          method="POST"
+          path="/contact"
+          description={t(
+            "Submits a quote enquiry. Pricing is scoped per workspace rather than published, so this is how a quote is requested.",
+            "Šalje upit za ponudu. Cijena se određuje po radnom prostoru umjesto da se objavljuje, pa se ponuda traži ovim putem.",
+          )}
+          request={`curl -X POST "${product.apiBaseUrl}/contact" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "name": "Lucia Marić",
+    "email": "lucia@studiolucia.hr",
+    "business": "Studio Lucia",
+    "city": "Zagreb",
+    "locations": "1"
+  }'`}
+          response={`{
+  "accepted": true,
+  "applied": false,
+  "message": "Your enquiry was accepted but not persisted — this deployment runs in demo mode."
+}`}
+        />
+
         {/* Webhooks */}
         <SectionHeader id="webhooks" title={t("Webhooks", "Webhookovi")} />
         <div className="rounded-xl border border-line bg-surface p-5">
