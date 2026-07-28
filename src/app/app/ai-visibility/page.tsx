@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { EngineIcon } from "@/components/ai-visibility/engine-icon";
 import { ProbeRunner } from "@/components/ai-visibility/probe-runner";
 import { Topbar } from "@/components/app-shell/topbar";
 import { Badge, Panel, PanelHeader } from "@/components/ui/primitives";
@@ -139,14 +140,7 @@ export default function AiVisibilityPage() {
                     <li key={engine.id} className="px-5 py-3">
                       <div className="flex items-center justify-between gap-3">
                         <span className="flex items-center gap-2 text-sm text-foreground">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={`https://cdn.simpleicons.org/${engine.slug}/a1a1aa`}
-                            alt=""
-                            width={14}
-                            height={14}
-                            loading="lazy"
-                          />
+                          <EngineIcon slug={engine.slug} label={engine.label} size={14} />
                           {engine.label}
                         </span>
                         <span className="font-mono text-xs text-secondary">

@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, Loader2, Search, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { EngineIcon } from "@/components/ai-visibility/engine-icon";
 import { Badge, Button } from "@/components/ui/primitives";
 import { useI18n } from "@/lib/i18n";
 import type { AiVisibilityProbe } from "@/lib/types";
@@ -123,15 +124,7 @@ export function ProbeRunner({
               )}
             >
               <div className="flex items-center gap-2.5">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`https://cdn.simpleicons.org/${engine.slug}/a1a1aa`}
-                  alt=""
-                  width={16}
-                  height={16}
-                  loading="lazy"
-                  className="h-4 w-4 shrink-0"
-                />
+                <EngineIcon slug={engine.slug} label={engine.label} size={16} />
                 <span className="text-sm font-medium text-foreground">{engine.label}</span>
               </div>
 
