@@ -6,7 +6,15 @@ FROM node:22-alpine AS base
 FROM base AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci --ignore-scripts
+# `npm install`, not `npm ci`.
+#
+# The lockfile is generated on Windows, where npm resolves optional dependencies for that
+# platform only. One of ESLint's transitive optional packages (@napi-rs/wasm-runtime) pulls in
+# @emnapi/core on Linux, and that entry never lands in a Windows-generated lockfile — so
+# `npm ci`, which demands an exact lockfile match, fails here with "Missing: @emnapi/core".
+# `npm install` resolves for the platform it is actually running on while still honouring the
+# pinned versions the lockfile does carry. Revisit if the lockfile is ever generated on Linux.
+RUN npm install --no-audit --no-fund --ignore-scripts
 
 FROM base AS builder
 WORKDIR /app
