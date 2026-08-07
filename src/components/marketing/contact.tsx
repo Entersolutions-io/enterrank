@@ -117,8 +117,8 @@ export function Contact() {
 
               <p className="mt-6 border-t border-line pt-5 text-sm leading-relaxed text-muted">
                 {t(
-                  "A single salon and a fifteen-location group are not the same product, so we would rather ask than publish a number that is wrong for you.",
-                  "Jedan salon i grupa s petnaest lokacija nisu isti proizvod, pa radije pitamo nego objavimo broj koji za vas nije točan.",
+                  "A single shop and a fifteen-location group are not the same product, so we would rather ask than publish a number that is wrong for you.",
+                  "Jedna trgovina i grupa s petnaest lokacija nisu isti proizvod, pa radije pitamo nego objavimo broj koji za vas nije točan.",
                 )}
               </p>
 

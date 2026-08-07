@@ -3,9 +3,10 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { ProbeRunner } from "@/components/ai-visibility/probe-runner";
+import { BusinessChips } from "@/components/demo/business-switcher";
 import { Eyebrow } from "@/components/ui/primitives";
+import { useDemoBusiness } from "@/lib/demo-business";
 import { useI18n } from "@/lib/i18n";
-import { probes } from "@/mock";
 
 /**
  * The section that separates this product from every other local SEO tool. Deliberately placed
@@ -14,11 +15,13 @@ import { probes } from "@/mock";
  */
 export function AiSection() {
   const { t } = useI18n();
+  const { business } = useDemoBusiness();
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-120px" });
-  const [probeId, setProbeId] = useState(probes[0].id);
+  const [probeId, setProbeId] = useState(business.probes[0].id);
 
-  const probe = probes.find((p) => p.id === probeId)!;
+  // Falls back to the tenant's first prompt when the selection belongs to another business.
+  const probe = business.probes.find((p) => p.id === probeId) ?? business.probes[0];
 
   return (
     <section ref={ref} className="relative overflow-hidden px-6 py-28">
@@ -64,8 +67,22 @@ export function AiSection() {
           transition={{ duration: 0.7, delay: 0.15 }}
           className="mx-auto mt-12 max-w-4xl"
         >
-          {/* key remounts the runner on probe change so it restarts from its initial running state */}
-          <ProbeRunner key={probe.id} probe={probe} probes={probes} onProbeChange={setProbeId} />
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-xs font-medium uppercase tracking-wider text-faint">
+              {t("Asking about", "Pitamo o")}
+            </p>
+            <BusinessChips />
+          </div>
+
+          {/* key remounts the runner on probe or business change so it restarts from its
+              initial running state */}
+          <ProbeRunner
+            key={`${business.id}:${probe.id}`}
+            probe={probe}
+            probes={business.probes}
+            city={business.location.city}
+            onProbeChange={setProbeId}
+          />
         </motion.div>
       </div>
     </section>

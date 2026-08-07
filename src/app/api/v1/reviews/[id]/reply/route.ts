@@ -1,5 +1,5 @@
 import { notFound, ok, readOnly } from "@/lib/api-response";
-import { replyDrafts, replyStages, reviews } from "@/mock";
+import { findReviewOwner, replyStages } from "@/mock";
 
 /**
  * Generates a reply draft for a review.
@@ -7,24 +7,25 @@ import { replyDrafts, replyStages, reviews } from "@/mock";
  * In production this is where the model call happens: the review body, the brand voice profile
  * and the location's target keywords go in, a scored draft comes out. The demo build resolves
  * the same contract from pre-written drafts so the response shape — and therefore every caller —
- * is identical.
+ * is identical. The workspace is taken from the review rather than from a parameter, since the
+ * brand voice a draft is written in belongs to whoever owns the review.
  */
 export async function POST(
   _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-  const review = reviews.find((r) => r.id === id);
-  if (!review) return notFound("review");
+  const owner = findReviewOwner(id);
+  if (!owner) return notFound("review");
 
-  const draft = replyDrafts[id] ?? review.reply;
+  const { business, review } = owner;
+  const draft = business.replyDrafts[id] ?? review.reply;
   if (!draft) {
     return Response.json(
       {
         error: {
           code: "no_draft_available",
-          message:
-            "This review has no pre-written draft in the demo dataset. Try rev_2f9a1, rev_2f9a2, rev_2f9a3 or rev_2f9a8.",
+          message: `This review has no pre-written draft in the demo dataset. For ${business.location.name}, try ${Object.keys(business.replyDrafts).join(", ")}.`,
         },
       },
       { status: 422 },
@@ -34,6 +35,7 @@ export async function POST(
   return ok({
     data: {
       review_id: id,
+      business: business.id,
       text: draft.text,
       keywords: draft.keywords,
       seo_score: draft.seoScore,
@@ -47,6 +49,6 @@ export async function POST(
 /** Publishing a reply to Google. Acknowledged, never persisted. */
 export async function PUT(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  if (!reviews.some((r) => r.id === id)) return notFound("review");
+  if (!findReviewOwner(id)) return notFound("review");
   return readOnly(`Publishing a reply to review ${id}`);
 }

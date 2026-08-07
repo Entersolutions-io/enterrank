@@ -1,0 +1,1092 @@
+import type { DemoBusiness } from "@/lib/types";
+import { series } from "./weeks";
+
+/**
+ * Demo tenant 5 — an independent gym in Novi Zagreb.
+ *
+ * The chain-pressure case. Two budget chains outspend it on the generic searches, so its map
+ * position on "gym near me" is hopeless and improving it would be throwing money away. What it
+ * can win are the specific searches — small group classes, beginners, a trainer who plans
+ * around an injury — and none of those are on the profile.
+ *
+ * Names are invented, including every competitor.
+ */
+export const gym: DemoBusiness = {
+  id: "gym",
+  label: { en: "Gym", hr: "Teretana" },
+  story: {
+    en: "Cannot outspend the chains on generic searches, and does not need to.",
+    hr: "Ne može nadmašiti lance na općim pretragama, a i ne mora.",
+  },
+  icon: "Dumbbell",
+  initials: "FP",
+  ownerName: "Nikolina Perak",
+
+  location: {
+    id: "loc_2a55e",
+    gbpLocationId: "locations/6390182745039281650",
+    name: "Fit Centar Puls",
+    category: { en: "Gym", hr: "Teretana" },
+    address: "Avenija Dubrovnik 16",
+    city: "Zagreb",
+    country: "HR",
+    lat: 45.7708,
+    lng: 15.9772,
+    phone: "+385 1 6528 440",
+    website: "https://fitpuls.hr",
+    rating: 4.5,
+    reviewCount: 187,
+    profileScore: 69,
+    connectedAt: "2026-03-17T11:50:00Z",
+  },
+
+  competitors: [
+    {
+      id: "cmp_41",
+      name: "Gym Faktor",
+      rating: 4.3,
+      reviewCount: 1420,
+      avgRank: 1.9,
+      aiVisibility: 61,
+      distanceMeters: 1300,
+    },
+    {
+      id: "cmp_42",
+      name: "Body Line Novi Zagreb",
+      rating: 4.4,
+      reviewCount: 340,
+      avgRank: 3.6,
+      aiVisibility: 27,
+      distanceMeters: 700,
+    },
+    {
+      id: "cmp_43",
+      name: "Arena Fitness Club",
+      rating: 4.2,
+      reviewCount: 980,
+      avgRank: 4.4,
+      aiVisibility: 48,
+      distanceMeters: 2400,
+    },
+    {
+      id: "cmp_44",
+      name: "Studio Kinetika",
+      rating: 4.8,
+      reviewCount: 126,
+      avgRank: 7.2,
+      aiVisibility: 16,
+      distanceMeters: 1800,
+    },
+    {
+      id: "cmp_45",
+      name: "PowerZone Zagreb",
+      rating: 4.1,
+      reviewCount: 512,
+      avgRank: 8.9,
+      aiVisibility: 22,
+      distanceMeters: 3100,
+    },
+  ],
+
+  competitorNote: {
+    en: "Gym Faktor has 1,420 reviews and a marketing budget; you are not going to beat it on “gym near me” and chasing that term is the most expensive mistake available to you. Look at Studio Kinetika instead — a third of your size, a worse position, and the best rating on the list, because it answers every review within hours and lists every class by name. The searches you can actually win are the narrow ones, and on those the chains are generic.",
+    hr: "Gym Faktor ima 1.420 recenzija i marketinški budžet; nećete ga pobijediti na „teretana blizu mene“ i jurnjava za tim pojmom najskuplja je greška koja vam stoji na raspolaganju. Pogledajte radije Studio Kinetika — tri puta manji od vas, lošija pozicija i najbolja ocjena na popisu, jer odgovaraju na svaku recenziju unutar nekoliko sati i navode svaki program poimence. Pretrage koje stvarno možete dobiti su uske, a na njima su lanci općeniti.",
+  },
+
+  reviews: [
+    {
+      id: "rev_3b8c1",
+      locationId: "loc_2a55e",
+      author: "Filip Novak",
+      rating: 2,
+      text: {
+        en: "Between 18:00 and 20:00 it is impossible to train properly. I waited eleven minutes for a squat rack and gave up on the bench entirely. If you are going to sell that many memberships, add equipment or cap the evening.",
+        hr: "Između 18 i 20 sati nemoguće je normalno trenirati. Čekao sam jedanaest minuta na stalak za čučnjeve, a klupu sam potpuno odustao. Ako prodajete toliko članarina, dodajte opremu ili ograničite večernji termin.",
+      },
+      createdAt: "2026-07-27T20:35:00Z",
+      status: "needs_reply",
+      sentiment: "negative",
+      sentimentConfidence: 0.94,
+      intent: "wait_time",
+      topics: ["peak hours", "equipment availability", "crowding"],
+    },
+    {
+      id: "rev_3b8c2",
+      locationId: "loc_2a55e",
+      author: "Maja Bertić",
+      rating: 5,
+      text: {
+        en: "I came back after a herniated disc expecting to be told to take it easy. Nikolina rebuilt my whole programme around it, checked with my physio, and eight months later I am lifting more than before the injury.",
+        hr: "Vratila sam se nakon hernije diska očekujući da će mi reći neka polako. Nikolina mi je oko toga složila cijeli program, provjerila s mojim fizioterapeutom, i osam mjeseci kasnije dižem više nego prije ozljede.",
+      },
+      createdAt: "2026-07-26T18:20:00Z",
+      status: "needs_reply",
+      sentiment: "positive",
+      sentimentConfidence: 0.99,
+      intent: "praise",
+      topics: ["injury rehabilitation", "staff: Nikolina", "programming"],
+    },
+    {
+      id: "rev_3b8c3",
+      locationId: "loc_2a55e",
+      author: "Luka Đurić",
+      rating: 4,
+      text: {
+        en: "Good gym, honest people. Is there a student rate? I asked at reception and got one number, a friend was told another, and there is nothing about prices anywhere online.",
+        hr: "Dobra teretana, korektni ljudi. Postoji li studentska cijena? Pitao sam na recepciji i dobio jedan iznos, prijatelju su rekli drugi, a o cijenama nigdje online nema ničega.",
+      },
+      createdAt: "2026-07-25T12:40:00Z",
+      status: "needs_reply",
+      sentiment: "positive",
+      sentimentConfidence: 0.7,
+      intent: "question",
+      topics: ["student pricing", "membership", "information gap"],
+    },
+    {
+      id: "rev_3b8c4",
+      locationId: "loc_2a55e",
+      author: "Ivan Šola",
+      rating: 1,
+      text: {
+        en: "Cancelling requires coming in person during office hours, which are the hours I work. I signed up online in four minutes and it took three visits to get out.",
+        hr: "Za otkazivanje se mora doći osobno u uredovno vrijeme, a to je vrijeme kad radim. Učlanio sam se online za četiri minute, a trebala su mi tri dolaska da izađem.",
+      },
+      createdAt: "2026-07-24T17:10:00Z",
+      status: "drafted",
+      sentiment: "negative",
+      sentimentConfidence: 0.96,
+      intent: "service_complaint",
+      topics: ["cancellation", "contract terms", "office hours"],
+      reply: {
+        text: {
+          en: "Ivan, that asymmetry is indefensible and you are right to name it. Cancellation by email is live from 1 August — one message to otkazi@fitpuls.hr, confirmed in writing within one working day, no visit. Your membership was closed on the day of your first visit and we have refunded the two weeks in between.",
+          hr: "Ivane, ta je nesrazmjernost neobranjiva i s pravom je ističete. Otkazivanje e-poštom aktivno je od 1. kolovoza — jedna poruka na otkazi@fitpuls.hr, pisana potvrda u roku od jednog radnog dana, bez dolaska. Vaše je članstvo zatvoreno na dan prvog dolaska, a dva tjedna između vratili smo vam.",
+        },
+        keywords: [],
+        seoScore: 55,
+        generatedAt: "2026-07-25T09:15:00Z",
+        automated: false,
+      },
+    },
+    {
+      id: "rev_3b8c5",
+      locationId: "loc_2a55e",
+      author: "Tea Kovačević",
+      rating: 5,
+      text: {
+        en: "Marin spent twenty minutes on my deadlift form on a Tuesday evening without being asked and without selling me anything. That is why I renewed.",
+        hr: "Marin je u utorak navečer proveo dvadeset minuta na mojoj tehnici mrtvog dizanja, a da nisam tražila i bez da mi je bilo što prodavao. Zato sam obnovila članarinu.",
+      },
+      createdAt: "2026-07-22T19:50:00Z",
+      status: "answered",
+      sentiment: "positive",
+      sentimentConfidence: 0.98,
+      intent: "staff_mention",
+      topics: ["staff: Marin", "coaching", "renewal"],
+      reply: {
+        text: {
+          en: "Tea, thank you — the floor trainers are on the floor for exactly that, and none of them work on commission. If you want the same on the bench or the squat, just wave; it is included in every membership.",
+          hr: "Tea, hvala — treneri su na parketu upravo zbog toga i nitko od njih ne radi na proviziju. Ako želite isto za klupu ili čučanj, samo mahnite; uključeno je u svaku članarinu.",
+        },
+        keywords: ["personal trainer Zagreb"],
+        seoScore: 77,
+        generatedAt: "2026-07-23T08:40:00Z",
+        publishedAt: "2026-07-23T08:42:00Z",
+        automated: true,
+      },
+    },
+    {
+      id: "rev_3b8c6",
+      locationId: "loc_2a55e",
+      author: "Andrej Milić",
+      rating: 3,
+      text: {
+        en: "Gym itself is good. The changing rooms after 19:00 are a different story — towels on the floor and two showers out of order for a fortnight.",
+        hr: "Sama teretana je dobra. Svlačionice nakon 19 sati druga su priča — ručnici po podu i dva tuša u kvaru dva tjedna.",
+      },
+      createdAt: "2026-07-19T21:05:00Z",
+      status: "answered",
+      sentiment: "neutral",
+      sentimentConfidence: 0.9,
+      intent: "service_complaint",
+      topics: ["changing rooms", "cleanliness", "maintenance"],
+      reply: {
+        text: {
+          en: "Andrej, both fair. The showers were waiting on a part that arrived on 16 July and all six work again. Cleaning now runs at 17:00 and 21:00 instead of once at closing, which is when the mess actually happens.",
+          hr: "Andreje, oboje stoji. Tuševi su čekali dio koji je stigao 16. srpnja i svih šest opet radi. Čišćenje sada ide u 17 i u 21 sat umjesto jednom pri zatvaranju, a nered nastaje upravo tada.",
+        },
+        keywords: [],
+        seoScore: 51,
+        generatedAt: "2026-07-20T09:30:00Z",
+        publishedAt: "2026-07-20T09:34:00Z",
+        automated: false,
+      },
+    },
+    {
+      id: "rev_3b8c7",
+      locationId: "loc_2a55e",
+      author: "S. M.",
+      rating: 1,
+      text: {
+        en: "LOSE 15KG IN ONE MONTH message me for the plan!!!",
+        hr: "SMRŠAVITE 15KG U MJESEC DANA javite mi se za plan!!!",
+      },
+      createdAt: "2026-07-18T02:55:00Z",
+      status: "needs_reply",
+      sentiment: "negative",
+      sentimentConfidence: 0.61,
+      intent: "spam",
+      topics: [],
+    },
+    {
+      id: "rev_3b8c8",
+      locationId: "loc_2a55e",
+      author: "Petra Grgić",
+      rating: 5,
+      text: {
+        en: "Twelve people in a class, not thirty. The trainer knows everyone's name and corrects you individually. I left a chain gym for exactly this.",
+        hr: "Dvanaest ljudi u grupi, ne trideset. Trenerica zna svačije ime i ispravlja vas pojedinačno. Iz lančane teretane otišla sam upravo zbog ovoga.",
+      },
+      createdAt: "2026-07-15T20:10:00Z",
+      status: "answered",
+      sentiment: "positive",
+      sentimentConfidence: 0.99,
+      intent: "praise",
+      topics: ["group classes", "class size", "coaching"],
+      reply: {
+        text: {
+          en: "Petra, thank you — twelve is a hard cap and we would rather add a class than a row. Group training is included in the full membership, and the Tuesday and Thursday 07:00 slots are the quietest if you ever want eight instead of twelve.",
+          hr: "Petra, hvala — dvanaest je čvrsta granica i radije ćemo dodati termin nego red. Grupni treninzi uključeni su u punu članarinu, a termini utorkom i četvrtkom u 7 sati najmirniji su ako ikad poželite osmero umjesto dvanaestero.",
+        },
+        keywords: ["group training Zagreb"],
+        seoScore: 88,
+        generatedAt: "2026-07-16T08:20:00Z",
+        publishedAt: "2026-07-16T08:23:00Z",
+        automated: true,
+      },
+    },
+    {
+      id: "rev_3b8c9",
+      locationId: "loc_2a55e",
+      author: "Dino Vrbanić",
+      rating: 4,
+      text: {
+        en: "Free weights area is excellent and everything is new. The cardio corner is too small for the number of members — three treadmills for a gym this size is optimistic.",
+        hr: "Zona sa slobodnim utezima je izvrsna i sve je novo. Kardio kutak je premalen za broj članova — tri trake za teretanu ove veličine su optimizam.",
+      },
+      createdAt: "2026-07-11T18:45:00Z",
+      status: "answered",
+      sentiment: "positive",
+      sentimentConfidence: 0.92,
+      intent: "service_complaint",
+      topics: ["equipment", "cardio", "capacity"],
+      reply: {
+        text: {
+          en: "Dino, thank you — and you are right about the ratio. Two more treadmills and a rower arrive in September when the mezzanine work finishes. The free weights area is where we chose to spend first and we would make that choice again.",
+          hr: "Dino, hvala — i u pravu ste za omjer. Još dvije trake i veslač stižu u rujnu kad završe radovi na galeriji. U zonu sa slobodnim utezima odlučili smo prvo uložiti i taj bismo izbor ponovili.",
+        },
+        keywords: ["gym Novi Zagreb"],
+        seoScore: 69,
+        generatedAt: "2026-07-12T09:00:00Z",
+        publishedAt: "2026-07-12T09:05:00Z",
+        automated: true,
+      },
+    },
+    {
+      id: "rev_3b8d1",
+      locationId: "loc_2a55e",
+      author: "Marina Đuka",
+      rating: 2,
+      text: {
+        en: "I froze my membership for July before I left and was charged anyway. It was sorted out after two emails, but it should not have needed two emails.",
+        hr: "Zamrznula sam članarinu za srpanj prije odlaska i svejedno mi je naplaćeno. Riješeno je nakon dva e-maila, ali za to nisu trebala dva e-maila.",
+      },
+      createdAt: "2026-07-08T11:25:00Z",
+      status: "answered",
+      sentiment: "negative",
+      sentimentConfidence: 0.93,
+      intent: "service_complaint",
+      topics: ["membership freeze", "billing", "admin"],
+      reply: {
+        text: {
+          en: "Marina, we are sorry — a freeze requested in writing should never reach the billing run. It did because the request sat in an inbox nobody owned. Freezes now go through the member area and take effect immediately, and the July charge was refunded on 9 July.",
+          hr: "Marina, žao nam je — zamrzavanje zatraženo pisanim putem nikad ne bi smjelo doći do obračuna. Dogodilo se jer je zahtjev ostao u sandučiću za koji nitko nije bio zadužen. Zamrzavanja sada idu kroz članski portal i stupaju na snagu odmah, a srpanjski iznos vraćen je 9. srpnja.",
+        },
+        keywords: [],
+        seoScore: 53,
+        generatedAt: "2026-07-09T08:10:00Z",
+        publishedAt: "2026-07-09T08:14:00Z",
+        automated: false,
+      },
+    },
+    {
+      id: "rev_3b8d2",
+      locationId: "loc_2a55e",
+      author: "Goran Petrić",
+      rating: 5,
+      text: {
+        en: "Open at 06:00, which means I train before work instead of pretending I will train after it. Three years now.",
+        hr: "Otvoreno u 6, što znači da treniram prije posla umjesto da se pretvaram da ću trenirati poslije. Već tri godine.",
+      },
+      createdAt: "2026-07-03T07:30:00Z",
+      status: "answered",
+      sentiment: "positive",
+      sentimentConfidence: 0.97,
+      intent: "praise",
+      topics: ["early opening", "routine", "long-term member"],
+      reply: {
+        text: {
+          en: "Goran, thank you — 06:00 to 22:00 on weekdays, and the early shift has a trainer on the floor from 06:30. Three years is longer than most gym memberships and most gyms.",
+          hr: "Gorane, hvala — od 6 do 22 sata radnim danima, a u ranoj smjeni trener je na parketu od 6:30. Tri godine dulje su od većine članarina i od većine teretana.",
+        },
+        keywords: ["gym Zagreb"],
+        seoScore: 74,
+        generatedAt: "2026-07-03T17:00:00Z",
+        publishedAt: "2026-07-03T17:02:00Z",
+        automated: true,
+      },
+    },
+    {
+      id: "rev_3b8d3",
+      locationId: "loc_2a55e",
+      author: "Nikola Barišić",
+      rating: 3,
+      text: {
+        en: "The car park is full from 17:30 and you end up circling the block. Not really the gym's fault but it is part of going there.",
+        hr: "Parkiralište je puno od 17:30 pa na kraju kružite oko bloka. Nije baš krivnja teretane, ali to je dio dolaska.",
+      },
+      createdAt: "2026-06-27T18:00:00Z",
+      status: "answered",
+      sentiment: "neutral",
+      sentimentConfidence: 0.86,
+      intent: "service_complaint",
+      topics: ["parking", "peak hours"],
+      reply: {
+        text: {
+          en: "Nikola, it is partly our fault — we share the lot with the offices next door and never said so. From September we have twelve reserved spaces after 17:00, marked with our logo. Until then the side street behind the building is free after 17:00.",
+          hr: "Nikola, dijelom je i naša krivnja — parkiralište dijelimo s uredima do nas i to nikad nismo rekli. Od rujna imamo dvanaest rezerviranih mjesta nakon 17 sati, označenih našim logotipom. Do tada je sporedna ulica iza zgrade besplatna nakon 17 sati.",
+        },
+        keywords: [],
+        seoScore: 48,
+        generatedAt: "2026-06-28T09:20:00Z",
+        publishedAt: "2026-06-28T09:25:00Z",
+        automated: false,
+      },
+    },
+  ],
+
+  replyDrafts: {
+    rev_3b8c1: {
+      text: {
+        en: "Filip, eleven minutes for a rack is not training, it is queuing, and you are not the first to say it. A fourth rack and a second bench are ordered and installed in the week of 17 August, and until then the 06:00–08:00 and 20:00–22:00 windows are genuinely empty. We are also capping evening class intake so the floor is not competing with a group. Thank you for putting a number on it — that is what made it actionable.",
+        hr: "Filipe, jedanaest minuta za stalak nije trening nego čekanje, i niste prvi koji to kaže. Četvrti stalak i druga klupa naručeni su i postavljaju se u tjednu od 17. kolovoza, a do tada su termini od 6 do 8 i od 20 do 22 sata stvarno prazni. Ograničavamo i broj mjesta u večernjim grupama kako parket ne bi bio u konkurenciji s grupom. Hvala što ste naveli konkretan broj — zbog toga se moglo djelovati.",
+      },
+      keywords: ["gym Novi Zagreb"],
+      seoScore: 72,
+    },
+    rev_3b8c2: {
+      text: {
+        en: "Maja, thank you — and congratulations, because that was your work more than ours. Training around an injury is not a special service here, it is the normal one: every new member gets a movement screen, and Nikolina will talk to your physio if you want her to. Anyone reading this after a back injury, that is what to ask for at reception.",
+        hr: "Majo, hvala — i čestitke, jer to je više vaš rad nego naš. Trening prilagođen ozljedi ovdje nije posebna usluga nego uobičajena: svaki novi član prolazi procjenu pokreta, a Nikolina će razgovarati s vašim fizioterapeutom ako to želite. Svima koji ovo čitaju nakon ozljede leđa — to tražite na recepciji.",
+      },
+      keywords: ["personal trainer Zagreb", "gym Novi Zagreb"],
+      seoScore: 91,
+    },
+    rev_3b8c3: {
+      text: {
+        en: "Luka, thank you for asking — and two people getting two answers is our fault, not reception's. There is a student rate, it is a quarter off the full membership with a valid index, and it now sits on our profile and on fitpuls.hr alongside every other price. Nobody should have to ask twice to find out what something costs.",
+        hr: "Luka, hvala na pitanju — a to što su dvije osobe dobile dva odgovora naša je krivnja, ne recepcije. Studentska cijena postoji, iznosi četvrtinu manje od pune članarine uz važeći indeks, i sada stoji na našem profilu i na fitpuls.hr uz sve ostale cijene. Nitko ne bi trebao dvaput pitati da bi saznao koliko nešto košta.",
+      },
+      keywords: ["gym Zagreb", "student membership"],
+      seoScore: 84,
+    },
+    rev_3b8c7: {
+      text: {
+        en: "This review does not relate to a visit to our gym. We have reported it to Google for removal.",
+        hr: "Ova recenzija ne odnosi se na posjet našoj teretani. Prijavili smo je Googleu radi uklanjanja.",
+      },
+      keywords: [],
+      seoScore: 10,
+    },
+  },
+
+  keywords: [
+    {
+      id: "kw_41",
+      term: { en: "gym zagreb", hr: "teretana zagreb" },
+      volume: 5400,
+      avgRank: 7.1,
+      delta: -1.2,
+      top3Share: 0,
+    },
+    {
+      id: "kw_42",
+      term: { en: "gym near me", hr: "teretana blizu mene" },
+      volume: 14800,
+      avgRank: 10.4,
+      delta: 0.6,
+      top3Share: 0,
+    },
+    {
+      id: "kw_43",
+      term: { en: "fitness novi zagreb", hr: "fitness novi zagreb" },
+      volume: 1100,
+      avgRank: 2.4,
+      delta: -1.1,
+      top3Share: 0,
+    },
+    {
+      id: "kw_44",
+      term: { en: "group training zagreb", hr: "grupni treninzi zagreb" },
+      volume: 880,
+      avgRank: 4.9,
+      delta: -2.3,
+      top3Share: 0,
+    },
+    {
+      id: "kw_45",
+      term: { en: "personal trainer zagreb", hr: "personalni trener zagreb" },
+      volume: 2200,
+      avgRank: 6.7,
+      delta: -0.5,
+      top3Share: 0,
+    },
+    {
+      id: "kw_46",
+      term: { en: "gym open 24h zagreb", hr: "teretana otvorena 24h zagreb" },
+      volume: 1600,
+      avgRank: null,
+      delta: 0,
+      top3Share: 0,
+    },
+  ],
+
+  scanHistory: [
+    { date: "2026-05-05", atrs: 18.4 },
+    { date: "2026-05-19", atrs: 20.1 },
+    { date: "2026-06-02", atrs: 22.7 },
+    { date: "2026-06-16", atrs: 21.9 },
+    { date: "2026-06-30", atrs: 25.3 },
+    { date: "2026-07-14", atrs: 27.8 },
+    { date: "2026-07-28", atrs: 30.2 },
+  ],
+
+  probes: [
+    {
+      id: "probe_41",
+      locationId: "loc_2a55e",
+      prompt: {
+        en: "best gym in Novi Zagreb",
+        hr: "najbolja teretana u Novom Zagrebu",
+      },
+      visibilityScore: 52,
+      delta: 19,
+      results: [
+        {
+          engine: "chatgpt",
+          mentioned: true,
+          position: 2,
+          competitorsNamed: ["Gym Faktor", "Body Line Novi Zagreb"],
+          citedSources: ["google.com/maps", "fitpuls.hr"],
+          excerpt: {
+            en: "…Fit Centar Puls on Avenija Dubrovnik is described by members as smaller and better coached than the chains, with trainers on the floor rather than at a desk…",
+            hr: "…Fit Centar Puls na Aveniji Dubrovnik članovi opisuju kao manji i bolje vođen od lanaca, s trenerima na parketu, a ne za stolom…",
+          },
+          checkedAt: "2026-07-28T05:00:00Z",
+        },
+        {
+          engine: "gemini",
+          mentioned: true,
+          position: 4,
+          competitorsNamed: ["Gym Faktor", "Arena Fitness Club", "Body Line Novi Zagreb"],
+          citedSources: ["google.com/maps"],
+          excerpt: {
+            en: "…Fit Centar Puls holds 4.5 across 187 reviews, higher than either of the larger chains nearby…",
+            hr: "…Fit Centar Puls ima 4,5 na 187 recenzija, više od oba veća lanca u blizini…",
+          },
+          checkedAt: "2026-07-28T05:00:00Z",
+        },
+        {
+          engine: "perplexity",
+          mentioned: false,
+          position: null,
+          competitorsNamed: ["Gym Faktor", "Arena Fitness Club"],
+          citedSources: ["google.com/maps", "njuskalo.hr"],
+          excerpt: {
+            en: "…the two chains dominate coverage of this district; independent gyms publish little beyond an address…",
+            hr: "…dva lanca dominiraju u prikazu ovog kvarta; samostalne teretane objavljuju malo više od adrese…",
+          },
+          checkedAt: "2026-07-28T05:00:00Z",
+        },
+        {
+          engine: "ai_overviews",
+          mentioned: true,
+          position: 3,
+          competitorsNamed: ["Gym Faktor", "Body Line Novi Zagreb"],
+          citedSources: ["google.com/maps"],
+          excerpt: {
+            en: "…gyms in Novi Zagreb include Fit Centar Puls (4.5★, 187 reviews) on Avenija Dubrovnik…",
+            hr: "…teretane u Novom Zagrebu uključuju Fit Centar Puls (4,5★, 187 recenzija) na Aveniji Dubrovnik…",
+          },
+          checkedAt: "2026-07-28T05:00:00Z",
+        },
+      ],
+    },
+    {
+      id: "probe_42",
+      locationId: "loc_2a55e",
+      prompt: {
+        en: "gym with small group classes in Zagreb",
+        hr: "teretana s malim grupnim treninzima u Zagrebu",
+      },
+      visibilityScore: 44,
+      delta: 44,
+      results: [
+        {
+          engine: "chatgpt",
+          mentioned: true,
+          position: 3,
+          competitorsNamed: ["Studio Kinetika", "Gym Faktor"],
+          citedSources: ["google.com/maps", "reddit.com/r/zagreb"],
+          excerpt: {
+            en: "…reviewers of Fit Centar Puls mention a twelve-person cap on classes, which is unusual outside dedicated studios…",
+            hr: "…recenzenti Fit Centra Puls spominju ograničenje od dvanaest osoba po grupi, što je neuobičajeno izvan namjenskih studija…",
+          },
+          checkedAt: "2026-07-28T05:00:00Z",
+        },
+        {
+          engine: "gemini",
+          mentioned: false,
+          position: null,
+          competitorsNamed: ["Studio Kinetika"],
+          citedSources: ["google.com/maps"],
+          excerpt: {
+            en: "…Studio Kinetika lists each class with its size limit and schedule, the clearest match for this request…",
+            hr: "…Studio Kinetika navodi svaki program s ograničenjem broja polaznika i rasporedom, što je najjasniji odgovor na ovaj upit…",
+          },
+          checkedAt: "2026-07-28T05:00:00Z",
+        },
+        {
+          engine: "perplexity",
+          mentioned: true,
+          position: 4,
+          competitorsNamed: ["Studio Kinetika", "Gym Faktor", "Arena Fitness Club"],
+          citedSources: ["reddit.com/r/zagreb", "google.com/maps"],
+          excerpt: {
+            en: "…a thread on leaving chain gyms names Fit Centar Puls for class size…",
+            hr: "…rasprava o napuštanju lančanih teretana navodi Fit Centar Puls zbog veličine grupa…",
+          },
+          checkedAt: "2026-07-28T05:00:00Z",
+        },
+        {
+          engine: "ai_overviews",
+          mentioned: false,
+          position: null,
+          competitorsNamed: ["Studio Kinetika"],
+          citedSources: ["google.com/maps"],
+          excerpt: {
+            en: "…few gym profiles in Zagreb publish class schedules or group sizes…",
+            hr: "…malo profila teretana u Zagrebu objavljuje raspored programa ili veličinu grupa…",
+          },
+          checkedAt: "2026-07-28T05:00:00Z",
+        },
+      ],
+    },
+    {
+      id: "probe_43",
+      locationId: "loc_2a55e",
+      prompt: {
+        en: "24 hour gym in Zagreb",
+        hr: "teretana otvorena 24 sata u Zagrebu",
+      },
+      visibilityScore: 0,
+      delta: 0,
+      results: [
+        {
+          engine: "chatgpt",
+          mentioned: false,
+          position: null,
+          competitorsNamed: ["Gym Faktor", "PowerZone Zagreb"],
+          citedSources: ["google.com/maps"],
+          excerpt: {
+            en: "…Gym Faktor operates two 24-hour locations in Zagreb; most independent gyms close by 22:00…",
+            hr: "…Gym Faktor ima dvije lokacije otvorene 24 sata u Zagrebu; većina samostalnih teretana zatvara do 22 sata…",
+          },
+          checkedAt: "2026-07-28T05:00:00Z",
+        },
+        {
+          engine: "gemini",
+          mentioned: false,
+          position: null,
+          competitorsNamed: ["Gym Faktor"],
+          citedSources: ["google.com/maps"],
+          excerpt: {
+            en: "…only chain locations list round-the-clock access in this city…",
+            hr: "…samo lokacije lanaca u ovom gradu navode pristup 24 sata…",
+          },
+          checkedAt: "2026-07-28T05:00:00Z",
+        },
+        {
+          engine: "perplexity",
+          mentioned: false,
+          position: null,
+          competitorsNamed: ["Gym Faktor", "PowerZone Zagreb"],
+          citedSources: ["google.com/maps", "njuskalo.hr"],
+          excerpt: {
+            en: "…card-access 24-hour gyms are limited to two operators…",
+            hr: "…teretane s pristupom karticom 24 sata ograničene su na dva operatera…",
+          },
+          checkedAt: "2026-07-28T05:00:00Z",
+        },
+        {
+          engine: "ai_overviews",
+          mentioned: false,
+          position: null,
+          competitorsNamed: ["Gym Faktor"],
+          citedSources: ["google.com/maps"],
+          excerpt: {
+            en: "…check individual locations, as 24-hour access is often limited to certain memberships…",
+            hr: "…provjerite pojedine lokacije jer je pristup 24 sata često ograničen na određene članarine…",
+          },
+          checkedAt: "2026-07-28T05:00:00Z",
+        },
+      ],
+    },
+    {
+      id: "probe_44",
+      locationId: "loc_2a55e",
+      prompt: {
+        en: "gym for beginners in Zagreb with a trainer included",
+        hr: "teretana za početnike u Zagrebu s uključenim trenerom",
+      },
+      visibilityScore: 27,
+      delta: 27,
+      results: [
+        {
+          engine: "chatgpt",
+          mentioned: true,
+          position: 4,
+          competitorsNamed: ["Studio Kinetika", "Body Line Novi Zagreb", "Gym Faktor"],
+          citedSources: ["google.com/maps"],
+          excerpt: {
+            en: "…several reviews of Fit Centar Puls describe trainers correcting technique without an upsell, though the gym does not list an induction programme…",
+            hr: "…nekoliko recenzija Fit Centra Puls opisuje trenere koji ispravljaju tehniku bez naknadne prodaje, iako teretana ne navodi program uvođenja…",
+          },
+          checkedAt: "2026-07-28T05:00:00Z",
+        },
+        {
+          engine: "gemini",
+          mentioned: false,
+          position: null,
+          competitorsNamed: ["Body Line Novi Zagreb", "Studio Kinetika"],
+          citedSources: ["google.com/maps"],
+          excerpt: {
+            en: "…Body Line advertises a free introductory session with a trainer for new members…",
+            hr: "…Body Line oglašava besplatan uvodni trening s trenerom za nove članove…",
+          },
+          checkedAt: "2026-07-28T05:00:00Z",
+        },
+        {
+          engine: "perplexity",
+          mentioned: false,
+          position: null,
+          competitorsNamed: ["Studio Kinetika", "Body Line Novi Zagreb"],
+          citedSources: ["google.com/maps"],
+          excerpt: {
+            en: "…gyms that state an included induction are the safest recommendation for a beginner…",
+            hr: "…teretane koje navode uključen uvodni trening najsigurnija su preporuka za početnika…",
+          },
+          checkedAt: "2026-07-28T05:00:00Z",
+        },
+        {
+          engine: "ai_overviews",
+          mentioned: false,
+          position: null,
+          competitorsNamed: ["Body Line Novi Zagreb"],
+          citedSources: ["google.com/maps"],
+          excerpt: {
+            en: "…what is included with a membership varies; confirm with the gym directly…",
+            hr: "…što je uključeno u članarinu razlikuje se; provjerite izravno s teretanom…",
+          },
+          checkedAt: "2026-07-28T05:00:00Z",
+        },
+      ],
+    },
+  ],
+
+  aeoActions: [
+    {
+      id: "aeo_41",
+      title: {
+        en: "Publish the class timetable with group sizes",
+        hr: "Objavite raspored programa s veličinom grupa",
+      },
+      detail: {
+        en: "Your twelve-person cap is the single thing the chains cannot copy, and it exists only inside a review. The competitor that publishes its timetable gets named for this question by three assistants out of four.",
+        hr: "Vaše ograničenje na dvanaest osoba jedina je stvar koju lanci ne mogu kopirati, a postoji samo unutar jedne recenzije. Konkurent koji objavljuje raspored spominje se za ovo pitanje kod tri od četiri asistenta.",
+      },
+      impact: "high",
+      effort: "low",
+    },
+    {
+      id: "aeo_42",
+      title: {
+        en: "List membership prices, including the student rate",
+        hr: "Navedite cijene članarina, uključujući studentsku",
+      },
+      detail: {
+        en: "Two members were quoted two different student prices at your own reception. Publishing the list settles that and answers the profile question that has been open since June.",
+        hr: "Dvojici članova na vašoj su recepciji rekli dvije različite studentske cijene. Objava cjenika to rješava i odgovara na pitanje s profila otvoreno od lipnja.",
+      },
+      impact: "high",
+      effort: "low",
+    },
+    {
+      id: "aeo_43",
+      title: {
+        en: "State that an induction with a trainer is included",
+        hr: "Navedite da je uvodni trening s trenerom uključen",
+      },
+      detail: {
+        en: "Beginners are the highest-value search you are losing, and you already do this for free — a competitor gets named for it because they wrote one sentence about it.",
+        hr: "Početnici su pretraga najveće vrijednosti koju gubite, a vi to već radite besplatno — konkurent se za to spominje jer je o tome napisao jednu rečenicu.",
+      },
+      impact: "high",
+      effort: "low",
+    },
+    {
+      id: "aeo_44",
+      title: {
+        en: "Stop chasing “gym near me”",
+        hr: "Prestanite juriti „teretana blizu mene“",
+      },
+      detail: {
+        en: "14,800 searches a month and you sit at 10.4 against a chain with 1,420 reviews. The four terms above cost nothing and convert better. This is the one recommendation that saves money rather than spending it.",
+        hr: "14.800 pretraga mjesečno, a vi ste na 10,4 naspram lanca s 1.420 recenzija. Četiri gornja pojma ne koštaju ništa i bolje konvertiraju. Ovo je jedina preporuka koja štedi novac umjesto da ga troši.",
+      },
+      impact: "medium",
+      effort: "low",
+    },
+  ],
+
+  brandVoice: {
+    locationId: "loc_2a55e",
+    formality: 30,
+    warmth: 58,
+    bannedWords: ["transformation", "beach body", "guaranteed results", "no pain no gain"],
+    preferredPhrases: ["see you on the floor", "thank you for telling us", "ask any trainer"],
+    targetKeywords: [
+      "gym Novi Zagreb",
+      "group training Zagreb",
+      "personal trainer Zagreb",
+      "Avenija Dubrovnik",
+      "gym Zagreb",
+    ],
+    signature: "— Nikolina and the Fit Centar Puls team",
+    autoPublishAtOrAbove: 4,
+  },
+
+  voicePreview: {
+    casualWarm: {
+      en: "Tea, thank you so much — that is exactly why Marin is on the floor and not behind a desk! Wave any time you want a second pair of eyes.",
+      hr: "Tea, puno hvala — upravo je zato Marin na parketu, a ne za stolom! Mahnite kad god želite drugi par očiju.",
+    },
+    casualConcise: {
+      en: "Tea, thanks — that is what the floor trainers are there for. Just wave.",
+      hr: "Tea, hvala — treneri na parketu su tu upravo zbog toga. Samo mahnite.",
+    },
+    formalWarm: {
+      en: "Tea, thank you — the floor trainers are on the floor for exactly that, and none of them work on commission. It is included in every membership.",
+      hr: "Tea, hvala — treneri su na parketu upravo zbog toga i nitko od njih ne radi na proviziju. Uključeno je u svaku članarinu.",
+    },
+    formalConcise: {
+      en: "Thank you for your review. Technique coaching on the floor is included in every membership.",
+      hr: "Hvala na vašoj recenziji. Ispravljanje tehnike na parketu uključeno je u svaku članarinu.",
+    },
+  },
+
+  profileChecks: [
+    {
+      id: "chk_41",
+      label: { en: "Business hours set for every day", hr: "Radno vrijeme postavljeno za svaki dan" },
+      weight: 10,
+      passed: true,
+      hint: {
+        en: "06:00–22:00 weekdays and weekend hours are all set.",
+        hr: "Radnim danima 6–22 sata i vikend radno vrijeme su postavljeni.",
+      },
+    },
+    {
+      id: "chk_42",
+      label: {
+        en: "Holiday hours for the next 90 days",
+        hr: "Blagdansko radno vrijeme za idućih 90 dana",
+      },
+      weight: 6,
+      passed: false,
+      hint: {
+        en: "August holidays are unset, and the summer schedule differs from the published one.",
+        hr: "Kolovoški blagdani nisu postavljeni, a ljetni raspored razlikuje se od objavljenog.",
+      },
+    },
+    {
+      id: "chk_43",
+      label: {
+        en: "Services and membership prices listed",
+        hr: "Navedene usluge i cijene članarina",
+      },
+      weight: 14,
+      passed: false,
+      hint: {
+        en: "No prices and no class timetable. Two members were quoted different student rates at reception in the same month.",
+        hr: "Nema cijena ni rasporeda programa. Dvojici članova na recepciji su istog mjeseca rekli različite studentske cijene.",
+      },
+    },
+    {
+      id: "chk_44",
+      label: { en: "At least 20 photos uploaded", hr: "Najmanje 20 učitanih fotografija" },
+      weight: 12,
+      passed: true,
+      hint: {
+        en: "52 photos, including the free weights area that reviewers keep praising.",
+        hr: "52 fotografije, uključujući zonu sa slobodnim utezima koju recenzenti stalno hvale.",
+      },
+    },
+    {
+      id: "chk_45",
+      label: { en: "Photos added in the last 30 days", hr: "Fotografije dodane u zadnjih 30 dana" },
+      weight: 8,
+      passed: true,
+      hint: {
+        en: "Six uploads this month, mostly the new equipment.",
+        hr: "Šest učitavanja ovaj mjesec, uglavnom nova oprema.",
+      },
+    },
+    {
+      id: "chk_46",
+      label: {
+        en: "Description mentions primary service area",
+        hr: "Opis spominje primarno područje usluge",
+      },
+      weight: 9,
+      passed: true,
+      hint: {
+        en: "Novi Zagreb and Avenija Dubrovnik both appear in the description.",
+        hr: "Novi Zagreb i Avenija Dubrovnik pojavljuju se u opisu.",
+      },
+    },
+    {
+      id: "chk_47",
+      label: { en: "Every profile question answered", hr: "Odgovoreno na svako pitanje na profilu" },
+      weight: 11,
+      passed: false,
+      hint: {
+        en: "3 questions unanswered, including the one about student pricing asked in June.",
+        hr: "3 pitanja bez odgovora, uključujući ono o studentskoj cijeni postavljeno u lipnju.",
+      },
+    },
+    {
+      id: "chk_48",
+      label: { en: "Posted in the last 7 days", hr: "Objavljeno u zadnjih 7 dana" },
+      weight: 10,
+      passed: true,
+      hint: {
+        en: "Posted three days ago. Class schedule changes make an easy weekly post.",
+        hr: "Objavljeno prije tri dana. Promjene rasporeda programa lako su tjedna objava.",
+      },
+    },
+    {
+      id: "chk_49",
+      label: { en: "Trial booking link connected", hr: "Poveznica za probni trening povezana" },
+      weight: 12,
+      passed: true,
+      hint: {
+        en: "Trial sessions route to fitpuls.hr/probni.",
+        hr: "Probni treninzi idu na fitpuls.hr/probni.",
+      },
+    },
+    {
+      id: "chk_50",
+      label: { en: "Reviews answered within 48 hours", hr: "Odgovoreno na recenzije unutar 48 sati" },
+      weight: 8,
+      passed: true,
+      hint: {
+        en: "Median response time is 14 hours.",
+        hr: "Medijan vremena odgovora je 14 sati.",
+      },
+    },
+  ],
+
+  posts: [
+    {
+      id: "post_41",
+      locationId: "loc_2a55e",
+      title: { en: "Autumn class timetable", hr: "Jesenski raspored programa" },
+      body: {
+        en: "Twelve places per class, never more. New 07:00 slots on Tuesday and Thursday, and the Saturday morning class moves to 09:00 from September.",
+        hr: "Dvanaest mjesta po grupi, nikad više. Novi termini u 7 sati utorkom i četvrtkom, a subotnja jutarnja grupa od rujna se pomiče na 9 sati.",
+      },
+      cta: "book",
+      status: "published",
+      scheduledFor: "2026-07-25T06:00:00Z",
+      publishedAt: "2026-07-25T06:00:00Z",
+      metrics: { views: 1516, clicks: 132 },
+      image: null,
+    },
+    {
+      id: "post_42",
+      locationId: "loc_2a55e",
+      title: { en: "Membership prices, in writing", hr: "Cijene članarina, napismeno" },
+      body: {
+        en: "Full, off-peak and student rates are now published on our profile and on fitpuls.hr. No packages, no joining fee, and cancellation by email from 1 August.",
+        hr: "Pune, izvanvršne i studentske cijene sada su objavljene na našem profilu i na fitpuls.hr. Bez paketa, bez upisnine, a otkazivanje e-poštom od 1. kolovoza.",
+      },
+      cta: "learn_more",
+      status: "scheduled",
+      scheduledFor: "2026-08-01T06:00:00Z",
+      image: null,
+    },
+    {
+      id: "post_43",
+      locationId: "loc_2a55e",
+      title: { en: "Two more racks in August", hr: "Još dva stalka u kolovozu" },
+      body: {
+        en: "A fourth squat rack and a second bench are installed in the week of 17 August. Evening waiting is the complaint we hear most and this is the answer to it.",
+        hr: "Četvrti stalak za čučnjeve i druga klupa postavljaju se u tjednu od 17. kolovoza. Večernje čekanje pritužba je koju najčešće čujemo i ovo je odgovor na nju.",
+      },
+      cta: "none",
+      status: "draft",
+      scheduledFor: "2026-08-10T06:00:00Z",
+      image: null,
+    },
+    {
+      id: "post_44",
+      locationId: "loc_2a55e",
+      title: { en: "Every membership includes an induction", hr: "Svaka članarina uključuje uvodni trening" },
+      body: {
+        en: "A movement screen and a written first programme with a trainer, included, not sold separately. Ask at reception or book it with your trial session.",
+        hr: "Procjena pokreta i napisan prvi program s trenerom, uključeno, ne prodaje se zasebno. Pitajte na recepciji ili rezervirajte uz probni trening.",
+      },
+      cta: "book",
+      status: "published",
+      scheduledFor: "2026-07-02T06:00:00Z",
+      publishedAt: "2026-07-02T06:00:00Z",
+      metrics: { views: 2340, clicks: 198 },
+      image: null,
+    },
+    {
+      id: "post_45",
+      locationId: "loc_2a55e",
+      title: { en: "Showers are all working again", hr: "Svi tuševi ponovno rade" },
+      body: {
+        en: "The part arrived on 16 July and all six are back. Cleaning now runs twice in the evening instead of once at closing.",
+        hr: "Dio je stigao 16. srpnja i svih šest ponovno radi. Čišćenje sada ide dvaput navečer umjesto jednom pri zatvaranju.",
+      },
+      cta: "none",
+      status: "published",
+      scheduledFor: "2026-06-20T06:00:00Z",
+      publishedAt: "2026-06-20T06:00:00Z",
+      metrics: { views: 894, clicks: 41 },
+      image: null,
+    },
+  ],
+
+  questions: [
+    {
+      id: "qst_41",
+      locationId: "loc_2a55e",
+      author: "Karlo J.",
+      question: {
+        en: "Is there a student membership and how much is it?",
+        hr: "Postoji li studentska članarina i koliko iznosi?",
+      },
+      askedAt: "2026-06-08T13:20:00Z",
+      views: 476,
+    },
+    {
+      id: "qst_42",
+      locationId: "loc_2a55e",
+      author: "Iva R.",
+      question: {
+        en: "Are group classes included in the membership or extra?",
+        hr: "Jesu li grupni treninzi uključeni u članarinu ili se plaćaju posebno?",
+      },
+      askedAt: "2026-06-27T10:05:00Z",
+      views: 358,
+    },
+    {
+      id: "qst_43",
+      locationId: "loc_2a55e",
+      author: "Stjepan V.",
+      question: {
+        en: "Can I freeze the membership while I am away in summer?",
+        hr: "Mogu li zamrznuti članarinu dok sam ljeti odsutan?",
+      },
+      askedAt: "2026-07-11T09:45:00Z",
+      views: 213,
+    },
+    {
+      id: "qst_44",
+      locationId: "loc_2a55e",
+      author: "Lana M.",
+      question: {
+        en: "Do you have a sauna?",
+        hr: "Imate li saunu?",
+      },
+      askedAt: "2026-05-30T18:30:00Z",
+      answer: {
+        en: "No sauna. There are six showers and a changing room for each side, and that is the whole wellness offer — we put the space into the free weights area instead.",
+        hr: "Nemamo saunu. Postoji šest tuševa i svlačionica sa svake strane i to je cijela wellness ponuda — prostor smo umjesto toga uložili u zonu sa slobodnim utezima.",
+      },
+      answeredAt: "2026-05-31T08:15:00Z",
+      views: 302,
+    },
+    {
+      id: "qst_45",
+      locationId: "loc_2a55e",
+      author: "Bruno T.",
+      question: {
+        en: "How busy is it around 18:00?",
+        hr: "Koliko je gužva oko 18 sati?",
+      },
+      askedAt: "2026-07-05T20:10:00Z",
+      answer: {
+        en: "Busy — 18:00 to 20:00 is the peak and you will wait for a rack. Before 08:00 and after 20:00 the floor is close to empty.",
+        hr: "Gužva — od 18 do 20 sati je vrhunac i čekat ćete stalak. Prije 8 i nakon 20 sati parket je gotovo prazan.",
+      },
+      answeredAt: "2026-07-06T07:40:00Z",
+      views: 429,
+    },
+  ],
+
+  overview: {
+    reviewsAwaitingReply: 4,
+    medianResponseHours: 14,
+
+    rating: 4.5,
+    ratingSeries: series([4.4, 4.4, 4.4, 4.45, 4.45, 4.5, 4.45, 4.5, 4.5, 4.5, 4.55, 4.5]),
+
+    avgRank: 6.6,
+    rankSeries: series([8.9, 8.6, 8.7, 8.2, 7.9, 7.7, 7.4, 7.2, 7.0, 6.9, 6.7, 6.6]),
+
+    aiVisibilityScore: 31,
+    aiVisibilitySeries: series([6, 6, 9, 11, 13, 14, 18, 20, 23, 26, 29, 31]),
+
+    profileScore: 69,
+
+    reviewVolume: [
+      { date: "2026-05-11", positive: 6, neutral: 1, negative: 1 },
+      { date: "2026-05-18", positive: 5, neutral: 2, negative: 0 },
+      { date: "2026-05-25", positive: 8, neutral: 1, negative: 2 },
+      { date: "2026-06-01", positive: 7, neutral: 1, negative: 1 },
+      { date: "2026-06-08", positive: 9, neutral: 2, negative: 0 },
+      { date: "2026-06-15", positive: 6, neutral: 1, negative: 2 },
+      { date: "2026-06-22", positive: 8, neutral: 3, negative: 1 },
+      { date: "2026-06-29", positive: 10, neutral: 1, negative: 1 },
+      { date: "2026-07-06", positive: 7, neutral: 2, negative: 2 },
+      { date: "2026-07-13", positive: 9, neutral: 1, negative: 1 },
+      { date: "2026-07-20", positive: 11, neutral: 2, negative: 2 },
+      { date: "2026-07-27", positive: 8, neutral: 2, negative: 1 },
+    ],
+  },
+};

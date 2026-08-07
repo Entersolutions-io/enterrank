@@ -1,7 +1,10 @@
-import { ok } from "@/lib/api-response";
-import { location, profileChecks } from "@/mock";
+import { businessScope, ok } from "@/lib/api-response";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const scope = businessScope(new URL(request.url));
+  if (!scope.ok) return scope.response;
+
+  const { location, profileChecks } = scope.business;
   const earned = profileChecks.filter((c) => c.passed).reduce((sum, c) => sum + c.weight, 0);
   const total = profileChecks.reduce((sum, c) => sum + c.weight, 0);
 

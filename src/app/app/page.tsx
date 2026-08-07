@@ -6,12 +6,14 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxi
 import { StatCard } from "@/components/app-shell/stat-card";
 import { Topbar } from "@/components/app-shell/topbar";
 import { Avatar, Badge, Panel, PanelHeader, Stars } from "@/components/ui/primitives";
+import { useDemoBusiness } from "@/lib/demo-business";
 import { useI18n } from "@/lib/i18n";
 import { daysAgo } from "@/lib/utils";
-import { aeoActions, location, overview, profileChecks, reviews } from "@/mock";
 
 export default function DashboardPage() {
   const { t, pick } = useI18n();
+  const { business } = useDemoBusiness();
+  const { aeoActions, location, overview, profileChecks, reviews } = business;
 
   const awaiting = reviews.filter((r) => r.status === "needs_reply");
   const failedChecks = profileChecks.filter((c) => !c.passed);
@@ -24,6 +26,12 @@ export default function DashboardPage() {
   );
   const aiDelta =
     overview.aiVisibilityScore - overview.aiVisibilitySeries[0].value;
+
+  // Every assistant answer across every tracked prompt, and how many of them named the business.
+  // Counting answers rather than distinct assistants keeps the hint moving with the score — an
+  // engine that names you once in four prompts is not "an engine that names you".
+  const answers = business.probes.flatMap((p) => p.results);
+  const namedIn = answers.filter((r) => r.mentioned).length;
 
   return (
     <>
@@ -53,7 +61,10 @@ export default function DashboardPage() {
             series={overview.rankSeries}
             lowerIsBetter
             href="/app/rankings"
-            hint={t("Across 6 tracked search terms", "Kroz 6 praćenih pojmova")}
+            hint={t(
+              `Across ${business.keywords.length} tracked search terms`,
+              `Kroz ${business.keywords.length} praćenih pojmova`,
+            )}
           />
           <StatCard
             label={t("AI visibility", "AI vidljivost")}
@@ -63,7 +74,10 @@ export default function DashboardPage() {
             deltaSuffix="pt"
             series={overview.aiVisibilitySeries}
             href="/app/ai-visibility"
-            hint={t("Named by 2 of 4 assistants", "Spomenuti od 2 od 4 asistenta")}
+            hint={t(
+              `Named in ${namedIn} of ${answers.length} assistant answers`,
+              `Spomenuti u ${namedIn} od ${answers.length} odgovora asistenata`,
+            )}
           />
           <StatCard
             label={t("Profile health", "Zdravlje profila")}

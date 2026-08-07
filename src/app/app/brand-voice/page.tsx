@@ -4,35 +4,34 @@ import { X } from "lucide-react";
 import { useState } from "react";
 import { Topbar } from "@/components/app-shell/topbar";
 import { Badge, Button, Panel, PanelHeader } from "@/components/ui/primitives";
+import { useDemoBusiness } from "@/lib/demo-business";
 import { useI18n } from "@/lib/i18n";
-import { brandVoice } from "@/mock";
+import type { DemoBusiness } from "@/lib/types";
 
 export default function BrandVoicePage() {
-  const { t } = useI18n();
+  const { business } = useDemoBusiness();
+  // Remounted per tenant so the sliders reset to that workspace's saved tone rather than
+  // carrying the previous business's unsaved position across.
+  return <BrandVoiceEditor key={business.id} business={business} />;
+}
+
+function BrandVoiceEditor({ business }: { business: DemoBusiness }) {
+  const { t, pick } = useI18n();
+  const { brandVoice, voicePreview } = business;
+
   const [formality, setFormality] = useState(brandVoice.formality);
   const [warmth, setWarmth] = useState(brandVoice.warmth);
 
   /** Live preview so the sliders have an obvious consequence rather than being decorative. */
-  const preview =
+  const preview = pick(
     formality < 35
       ? warmth > 60
-        ? t(
-            "Ana, thank you so much — three visits and counting means the world to us! Ines will be thrilled.",
-            "Ana, puno vam hvala — tri posjeta i brojimo dalje, to nam znači svijet! Ines će biti oduševljena.",
-          )
-        : t(
-            "Ana, thanks — good to hear it. We will pass this on to Ines.",
-            "Ana, hvala — drago nam je to čuti. Prenijet ćemo Ines.",
-          )
+        ? voicePreview.casualWarm
+        : voicePreview.casualConcise
       : warmth > 60
-        ? t(
-            "Ana, thank you — three visits and counting means a lot to us. We will happily pass this on to Ines.",
-            "Ana, hvala — tri posjeta i brojimo dalje, to nam puno znači. Rado ćemo to prenijeti Ines.",
-          )
-        : t(
-            "Thank you for your review. We will pass your comments on to Ines.",
-            "Hvala na vašoj recenziji. Prenijet ćemo vaše komentare Ines.",
-          );
+        ? voicePreview.formalWarm
+        : voicePreview.formalConcise,
+  );
 
   return (
     <>

@@ -4,16 +4,18 @@ import Link from "next/link";
 import { useState } from "react";
 import { Topbar } from "@/components/app-shell/topbar";
 import { Avatar, Badge, Stars } from "@/components/ui/primitives";
+import { useDemoBusiness } from "@/lib/demo-business";
 import { useI18n } from "@/lib/i18n";
 import type { ReviewStatus, Sentiment } from "@/lib/types";
 import { cn, daysAgo } from "@/lib/utils";
-import { reviews } from "@/mock";
 
 type StatusFilter = ReviewStatus | "all";
 type SentimentFilter = Sentiment | "all";
 
 export default function ReviewsPage() {
   const { t, pick } = useI18n();
+  const { business } = useDemoBusiness();
+  const { reviews } = business;
   const [status, setStatus] = useState<StatusFilter>("all");
   const [sentiment, setSentiment] = useState<SentimentFilter>("all");
 

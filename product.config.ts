@@ -21,9 +21,13 @@ export const product = {
   /** Prefix for API keys, mirroring EnterCRM's `eck_` convention. */
   apiKeyPrefix: "erk_",
 
+  /**
+   * Used in the page title and social cards only — there is no slogan anywhere on the page
+   * itself. Keep it a plain description of what the product does rather than a tagline.
+   */
   tagline: {
-    en: "Local Visibility Command Center",
-    hr: "Zapovjedni centar lokalne vidljivosti",
+    en: "Local visibility for small businesses",
+    hr: "Lokalna vidljivost za male tvrtke",
   },
 
   description: {
@@ -41,10 +45,12 @@ export const product = {
   demoAccount: {
     email: "demo@enterrank.io",
     password: "password",
-    /** The fictional business whose data fills the demo. */
-    businessName: "Studio Lucia",
-    businessCategory: { en: "Hair Salon", hr: "Frizerski salon" },
-    city: "Zagreb",
+    /**
+     * The demo carries five fictional businesses the visitor switches between rather than one,
+     * so the product is shown failing — and being fixed — in five different ways. The datasets
+     * live in `src/mock/businesses/`; the registry there is the source of truth for the list.
+     */
+    workspaceCount: 5,
   },
 } as const;
 

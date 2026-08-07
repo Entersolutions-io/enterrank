@@ -5,14 +5,19 @@ import { EngineIcon } from "@/components/ai-visibility/engine-icon";
 import { ProbeRunner } from "@/components/ai-visibility/probe-runner";
 import { Topbar } from "@/components/app-shell/topbar";
 import { Badge, Panel, PanelHeader } from "@/components/ui/primitives";
+import { useDemoBusiness } from "@/lib/demo-business";
 import { useI18n } from "@/lib/i18n";
-import { aeoActions, engines, probes } from "@/mock";
+import { engines } from "@/mock";
 import { cn } from "@/lib/utils";
 
 export default function AiVisibilityPage() {
   const { t, pick } = useI18n();
+  const { business } = useDemoBusiness();
+  const { aeoActions, probes } = business;
+
   const [probeId, setProbeId] = useState(probes[0].id);
-  const probe = probes.find((p) => p.id === probeId)!;
+  // Falls back to the tenant's first prompt after a business switch invalidates the selection.
+  const probe = probes.find((p) => p.id === probeId) ?? probes[0];
 
   // Blended score across every tracked prompt, weighted the same way a single probe is.
   const overallScore = Math.round(
@@ -37,6 +42,7 @@ export default function AiVisibilityPage() {
               key={probe.id}
               probe={probe}
               probes={probes}
+              city={business.location.city}
               onProbeChange={setProbeId}
               compact
             />
@@ -72,7 +78,7 @@ export default function AiVisibilityPage() {
                           onClick={() => setProbeId(p.id)}
                           className={cn(
                             "cursor-pointer transition-colors hover:bg-white/[0.02]",
-                            p.id === probeId && "bg-white/[0.03]",
+                            p.id === probe.id && "bg-white/[0.03]",
                           )}
                         >
                           <td className="px-5 py-3 text-foreground">{pick(p.prompt)}</td>

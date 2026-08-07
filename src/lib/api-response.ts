@@ -1,4 +1,5 @@
-import type { Paginated } from "@/lib/types";
+import type { DemoBusiness, Paginated } from "@/lib/types";
+import { DEFAULT_BUSINESS_ID, businesses, getBusiness, isBusinessId } from "@/mock";
 
 /**
  * Shared helpers for the public demo API.
@@ -14,6 +15,41 @@ const DEMO_HEADERS = {
   "Cache-Control": "no-store",
   "Access-Control-Allow-Origin": "*",
 } as const;
+
+export type BusinessScope =
+  | { ok: true; business: DemoBusiness }
+  | { ok: false; response: Response };
+
+/**
+ * Resolves the `business` query parameter to a demo workspace.
+ *
+ * The parameter exists because the browser picks its tenant from local storage and a `curl`
+ * cannot. In production the workspace comes from the API key instead, and this helper is the
+ * one thing that would be deleted. An unrecognised value is rejected rather than quietly
+ * defaulted — silently returning someone else's data is the wrong failure for an API.
+ */
+export function businessScope(url: URL): BusinessScope {
+  const raw = url.searchParams.get("business");
+  if (raw === null) return { ok: true, business: getBusiness(DEFAULT_BUSINESS_ID) };
+
+  if (!isBusinessId(raw)) {
+    return {
+      ok: false,
+      response: Response.json(
+        {
+          error: {
+            code: "unknown_business",
+            message: `No demo workspace with id ${raw}.`,
+            fields: { business: ["Must be one of: " + businesses.map((b) => b.id).join(", ")] },
+          },
+        },
+        { status: 422, headers: DEMO_HEADERS },
+      ),
+    };
+  }
+
+  return { ok: true, business: getBusiness(raw) };
+}
 
 export function ok<T>(body: T, status = 200) {
   return Response.json({ ...body, demo: true }, { status, headers: DEMO_HEADERS });

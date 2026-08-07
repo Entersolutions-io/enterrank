@@ -1,75 +1,26 @@
-import type { GridPoint, GridScan, Keyword } from "@/lib/types";
+import type { DemoBusiness, GridPoint, GridScan } from "@/lib/types";
 import { seeded } from "@/lib/utils";
-import { competitors } from "./location";
 
 /**
- * Tracked search terms.
- *
- * `avgRank` is the target the grid generator calibrates to, so the table and the heatmap can
- * never disagree. The spread across terms is deliberate — one term the business owns, one it
- * is mediocre at, one it loses at the edges, and one it does not appear for at all.
- */
-export const keywords: Keyword[] = [
-  {
-    id: "kw_01",
-    term: { en: "hair salon zagreb", hr: "frizerski salon zagreb" },
-    volume: 4400,
-    avgRank: 5.4,
-    delta: -1.3,
-    top3Share: 0, // derived from the scan; see keywordStats()
-  },
-  {
-    id: "kw_02",
-    term: { en: "balayage zagreb", hr: "balayage zagreb" },
-    volume: 1300,
-    avgRank: 2.4,
-    delta: -0.8,
-    top3Share: 0,
-  },
-  {
-    id: "kw_03",
-    term: { en: "hair salon near me", hr: "frizer blizu mene" },
-    volume: 9900,
-    avgRank: 11.2,
-    delta: 0.4,
-    top3Share: 0,
-  },
-  {
-    id: "kw_04",
-    term: { en: "men's haircut zagreb", hr: "muško šišanje zagreb" },
-    volume: 2900,
-    avgRank: 7.6,
-    delta: -2.1,
-    top3Share: 0,
-  },
-  {
-    id: "kw_05",
-    term: { en: "wedding hair zagreb", hr: "svadbena frizura zagreb" },
-    volume: 720,
-    avgRank: 3.1,
-    delta: -0.2,
-    top3Share: 0,
-  },
-  {
-    id: "kw_06",
-    term: { en: "keratin treatment zagreb", hr: "keratinski tretman zagreb" },
-    volume: 590,
-    avgRank: null,
-    delta: 0,
-    top3Share: 0,
-  },
-];
-
-/**
- * Builds a grid scan deterministically from the keyword id, so the same term always renders the
- * same heatmap across reloads and between server and client.
+ * Builds a grid scan deterministically from the tenant and keyword id, so the same term always
+ * renders the same heatmap across reloads, between server and client, and after the visitor
+ * switches business and switches back.
  *
  * The model mirrors how local rankings actually behave — best at the business's own door,
  * decaying outward faster than linearly — and is calibrated so the mean position across the
  * grid lands on the keyword's `avgRank`. Without that calibration the table and the map tell
  * two different stories, which is exactly the kind of detail that makes a demo feel fake.
+ *
+ * Keyword ids are unique across tenants, which is what keeps two businesses from producing an
+ * identical heatmap for terms that happen to have the same average position.
  */
-export function buildScan(keywordId: string, size = 7, spacingMeters = 500): GridScan {
+export function buildScan(
+  business: DemoBusiness,
+  keywordId: string,
+  size = 7,
+  spacingMeters = 500,
+): GridScan {
+  const { keywords, competitors, location } = business;
   const keyword = keywords.find((k) => k.id === keywordId) ?? keywords[0];
   const centre = (size - 1) / 2;
   const maxDistance = Math.sqrt(2) * centre || 1;
@@ -90,7 +41,8 @@ export function buildScan(keywordId: string, size = 7, spacingMeters = 500): Gri
 
   shaped.forEach(({ row, col, distance, curve }) => {
     // Noise grows with the target so weak terms look genuinely patchy, strong ones stay solid.
-    const jitter = (seeded(`${keyword.id}:${row}:${col}`) - 0.5) * (target === null ? 0 : target * 0.5);
+    const jitter =
+      (seeded(`${keyword.id}:${row}:${col}`) - 0.5) * (target === null ? 0 : target * 0.5);
 
     let rank: number | null;
     if (target === null) {
@@ -122,7 +74,7 @@ export function buildScan(keywordId: string, size = 7, spacingMeters = 500): Gri
 
   return {
     id: `scan_${keyword.id}`,
-    locationId: "loc_8f21c",
+    locationId: location.id,
     keywordId: keyword.id,
     size,
     spacingMeters,
@@ -152,18 +104,7 @@ function scanGeometry(size: number, centre: number, maxDistance: number) {
  * Scan-derived figures for the keyword table. Deriving rather than hard-coding these keeps the
  * table honest against whatever the grid actually produced.
  */
-export function keywordStats(keywordId: string) {
-  const scan = buildScan(keywordId);
+export function keywordStats(business: DemoBusiness, keywordId: string) {
+  const scan = buildScan(business, keywordId);
   return { avgRank: scan.avgRank, top3Share: Math.round(scan.solv), coverage: scan.atrs };
 }
-
-/** Scan history for the trend chart under the grid. */
-export const scanHistory: { date: string; atrs: number }[] = [
-  { date: "2026-05-05", atrs: 21.4 },
-  { date: "2026-05-19", atrs: 24.9 },
-  { date: "2026-06-02", atrs: 23.1 },
-  { date: "2026-06-16", atrs: 29.8 },
-  { date: "2026-06-30", atrs: 33.5 },
-  { date: "2026-07-14", atrs: 36.2 },
-  { date: "2026-07-28", atrs: 41.7 },
-];

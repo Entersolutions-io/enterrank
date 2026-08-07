@@ -3,10 +3,13 @@
 import { motion, useInView } from "framer-motion";
 import { Play, RotateCcw } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { BusinessCards } from "@/components/demo/business-switcher";
 import { CountUp, GeoGrid, GeoGridLegend } from "@/components/rankings/geo-grid";
 import { Badge, Button, Eyebrow } from "@/components/ui/primitives";
+import { useDemoBusiness } from "@/lib/demo-business";
 import { useI18n } from "@/lib/i18n";
-import { buildScan, keywords, location } from "@/mock";
+import type { BusinessId } from "@/lib/types";
+import { buildScan, getBusiness } from "@/mock";
 import { cn } from "@/lib/utils";
 
 const SCAN_MS = 2400;
@@ -14,30 +17,45 @@ const SCAN_MS = 2400;
 /**
  * The landing page's centrepiece: a real grid scan the visitor runs themselves.
  *
- * Switching keyword resets and re-runs, because the point of the section is the contrast —
- * "balayage" is nearly all green, "hair salon near me" falls apart at the edges, and
- * "keratin treatment" is empty, which is the slide that sells the product.
+ * Two axes of contrast, and both are the argument. Switching keyword shows that a single
+ * business owns some searches and vanishes from others — "balayage" is nearly all green,
+ * "keratin treatment" is empty. Switching business shows that this is not a hairdressing
+ * problem: the grocery is patchy everywhere, the restaurant is solid, the gym is buried by
+ * chains. Same product, five different diagnoses.
  */
 export function GridDemo() {
   const { t, pick } = useI18n();
+  const { business, setBusinessId } = useDemoBusiness();
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-120px" });
 
-  const [keywordId, setKeywordId] = useState(keywords[0].id);
+  const [keywordId, setKeywordId] = useState(business.keywords[0].id);
   const [runToken, setRunToken] = useState(0);
   const [scanning, setScanning] = useState(false);
   const [selected, setSelected] = useState<number | null>(null);
   const [hasRun, setHasRun] = useState(false);
 
-  const scan = useMemo(() => buildScan(keywordId), [keywordId]);
-  const keyword = keywords.find((k) => k.id === keywordId)!;
+  // Guards the window between a business switch and the state write that follows it.
+  const activeKeywordId = business.keywords.some((k) => k.id === keywordId)
+    ? keywordId
+    : business.keywords[0].id;
 
-  const run = (nextKeywordId = keywordId) => {
+  const scan = useMemo(() => buildScan(business, activeKeywordId), [business, activeKeywordId]);
+  const keyword = business.keywords.find((k) => k.id === activeKeywordId)!;
+
+  const run = (nextKeywordId = activeKeywordId) => {
     setKeywordId(nextKeywordId);
     setSelected(null);
     setScanning(true);
     setHasRun(true);
     setRunToken((token) => token + 1);
+  };
+
+  // Picking a business restarts the scan on that tenant's first tracked term. The dataset is
+  // read directly rather than from context, which has not re-rendered yet inside this handler.
+  const switchBusiness = (id: BusinessId) => {
+    setBusinessId(id);
+    run(getBusiness(id).keywords[0].id);
   };
 
   useEffect(() => {
@@ -84,25 +102,40 @@ export function GridDemo() {
           </h2>
           <p className="mt-5 text-pretty leading-relaxed text-secondary">
             {t(
-              "We sample Google Maps from 49 points across the neighbourhood and record where you appear from each one. Pick a search term and run the scan.",
-              "Uzorkujemo Google karte s 49 točaka po kvartu i bilježimo gdje se pojavljujete iz svake od njih. Odaberite pojam pretraživanja i pokrenite skeniranje.",
+              "We sample Google Maps from 49 points across the neighbourhood and record where you appear from each one. Pick a business, pick a search term, and run the scan.",
+              "Uzorkujemo Google karte s 49 točaka po kvartu i bilježimo gdje se pojavljujete iz svake od njih. Odaberite tvrtku, odaberite pojam pretraživanja i pokrenite skeniranje.",
             )}
           </p>
+        </motion.div>
+
+        {/* Business selector. Chosen here, it stays chosen inside the app demo. */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.08 }}
+          className="mt-10"
+        >
+          <p className="mb-3 text-center text-xs font-medium uppercase tracking-wider text-faint">
+            {t("Choose a sample business", "Odaberite primjer tvrtke")}
+          </p>
+          <BusinessCards onSelect={switchBusiness} />
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.15 }}
-          className="mt-12 grid gap-6 lg:grid-cols-[1.15fr_1fr]"
+          className="mt-8 grid gap-6 lg:grid-cols-[1.15fr_1fr]"
         >
           {/* Grid panel */}
           <div className="rounded-2xl border border-line bg-surface p-4 sm:p-5">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-xs text-muted">
-                <span className="font-mono text-secondary">{location.name}</span>
+                <span className="font-mono text-secondary">{business.location.name}</span>
                 <span className="text-faint">·</span>
-                <span>{location.address}, {location.city}</span>
+                <span>
+                  {business.location.address}, {business.location.city}
+                </span>
               </div>
               <div className="flex gap-2">
                 {hasRun ? (
@@ -144,7 +177,7 @@ export function GridDemo() {
                 {t("Search term", "Pojam pretraživanja")}
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
-                {keywords.map((k) => (
+                {business.keywords.map((k) => (
                   <button
                     key={k.id}
                     type="button"
@@ -152,7 +185,7 @@ export function GridDemo() {
                     disabled={scanning}
                     className={cn(
                       "rounded-lg border px-3 py-1.5 text-xs transition-colors disabled:opacity-50",
-                      k.id === keywordId
+                      k.id === activeKeywordId
                         ? "border-accent/40 bg-accent/10 text-accent-light"
                         : "border-line text-muted hover:border-line-strong hover:text-secondary",
                     )}

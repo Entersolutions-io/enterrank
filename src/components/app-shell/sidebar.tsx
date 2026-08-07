@@ -9,14 +9,18 @@ import {
   Store,
   Users,
   Volume2,
+  X,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import { useAppNav } from "@/components/app-shell/nav-state";
+import { WorkspaceMenu } from "@/components/demo/business-switcher";
 import { Logo } from "@/components/ui/logo";
+import { useDemoBusiness } from "@/lib/demo-business";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
-import { location } from "@/mock";
 
 interface NavItem {
   href: string;
@@ -25,16 +29,80 @@ interface NavItem {
   badge?: number;
 }
 
-export function Sidebar({ awaitingReplies }: { awaitingReplies: number }) {
-  const { pick, t } = useI18n();
+/**
+ * The app navigation.
+ *
+ * Rendered twice from one set of contents: a static column from `lg` up, and a drawer over the
+ * page below it. Below `lg` the column would eat two thirds of the viewport, and the app's own
+ * screens — grids, tables, the reply composer — are the point.
+ */
+export function Sidebar() {
+  const { open, setOpen } = useAppNav();
   const pathname = usePathname();
+
+  // Navigating closes the drawer. Handled here rather than on each link so it also covers the
+  // workspace switcher and anything else that changes the route.
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname, setOpen]);
+
+  // The drawer is a layer over the page, so the page behind it must not scroll under it.
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [open]);
+
+  return (
+    <>
+      <aside className="hidden w-60 shrink-0 flex-col border-r border-line bg-sidebar lg:flex">
+        <SidebarContents />
+      </aside>
+
+      {/* Mobile drawer */}
+      <div
+        className={cn(
+          "fixed inset-0 z-50 lg:hidden",
+          open ? "pointer-events-auto" : "pointer-events-none",
+        )}
+        aria-hidden={!open}
+      >
+        <div
+          className={cn(
+            "absolute inset-0 bg-black/60 transition-opacity duration-200",
+            open ? "opacity-100" : "opacity-0",
+          )}
+          onClick={() => setOpen(false)}
+        />
+        <div
+          className={cn(
+            "absolute inset-y-0 left-0 flex w-[17rem] max-w-[85vw] flex-col border-r border-line bg-sidebar transition-transform duration-250 ease-out",
+            open ? "translate-x-0" : "-translate-x-full",
+          )}
+        >
+          <SidebarContents onClose={() => setOpen(false)} />
+        </div>
+      </div>
+    </>
+  );
+}
+
+function SidebarContents({ onClose }: { onClose?: () => void }) {
+  const { pick, t } = useI18n();
+  const { business } = useDemoBusiness();
+  const pathname = usePathname();
+
+  // Derived here rather than passed down from the layout: the count belongs to whichever
+  // workspace is selected, and the layout is a server component that cannot know that.
+  const awaitingReplies = business.reviews.filter((r) => r.status === "needs_reply").length;
 
   const groups: { title: { en: string; hr: string }; items: NavItem[] }[] = [
     {
       title: { en: "Overview", hr: "Pregled" },
-      items: [
-        { href: "/app", icon: BarChart3, label: { en: "Dashboard", hr: "Nadzorna ploča" } },
-      ],
+      items: [{ href: "/app", icon: BarChart3, label: { en: "Dashboard", hr: "Nadzorna ploča" } }],
     },
     {
       title: { en: "Pillars", hr: "Stupovi" },
@@ -73,30 +141,25 @@ export function Sidebar({ awaitingReplies }: { awaitingReplies: number }) {
   ];
 
   return (
-    <aside className="hidden w-60 shrink-0 flex-col border-r border-line bg-sidebar lg:flex">
-      <div className="flex h-14 items-center border-b border-line px-5">
+    <>
+      <div className="flex h-14 shrink-0 items-center justify-between border-b border-line px-5">
         <Logo size="sm" />
+        {onClose ? (
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-muted transition-colors hover:text-foreground"
+            aria-label={t("Close navigation", "Zatvori navigaciju")}
+          >
+            <X className="h-5 w-5" />
+          </button>
+        ) : null}
       </div>
 
-      {/* Location switcher — single location in the demo, but the shape is what a multi-location
-          account would use. */}
-      <div className="border-b border-line px-3 py-3">
-        <button
-          type="button"
-          className="flex w-full items-center gap-2.5 rounded-lg border border-line bg-surface px-3 py-2 text-left transition-colors hover:border-line-strong"
-        >
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-accent/12 text-[10px] font-bold text-accent">
-            SL
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block truncate text-xs font-medium text-foreground">
-              {location.name}
-            </span>
-            <span className="block truncate text-[10px] text-faint">
-              {location.address}, {location.city}
-            </span>
-          </span>
-        </button>
+      {/* Workspace switcher. In the demo it swaps between five sample businesses; in production
+          it is the same control over the locations an account actually manages. */}
+      <div className="shrink-0 border-b border-line px-3 py-3">
+        <WorkspaceMenu />
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 py-4">
@@ -113,6 +176,7 @@ export function Sidebar({ awaitingReplies }: { awaitingReplies: number }) {
                   <li key={item.href}>
                     <Link
                       href={item.href}
+                      onClick={onClose}
                       className={cn(
                         "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm transition-colors",
                         active
@@ -120,9 +184,7 @@ export function Sidebar({ awaitingReplies }: { awaitingReplies: number }) {
                           : "text-muted hover:bg-white/[0.03] hover:text-secondary",
                       )}
                     >
-                      <item.icon
-                        className={cn("h-4 w-4 shrink-0", active ? "text-accent" : "")}
-                      />
+                      <item.icon className={cn("h-4 w-4 shrink-0", active ? "text-accent" : "")} />
                       <span className="flex-1 truncate">{pick(item.label)}</span>
                       {item.badge ? (
                         <span className="rounded-full bg-accent/15 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-accent">
@@ -138,14 +200,15 @@ export function Sidebar({ awaitingReplies }: { awaitingReplies: number }) {
         ))}
       </nav>
 
-      <div className="border-t border-line p-3">
+      <div className="shrink-0 border-t border-line p-3">
         <Link
           href="/"
+          onClick={onClose}
           className="block rounded-lg px-2.5 py-2 text-xs text-faint transition-colors hover:text-secondary"
         >
           ← {t("Back to site", "Natrag na stranicu")}
         </Link>
       </div>
-    </aside>
+    </>
   );
 }

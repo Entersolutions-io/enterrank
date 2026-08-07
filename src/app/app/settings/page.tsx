@@ -4,9 +4,9 @@ import { Check, Copy, Plus } from "lucide-react";
 import { useState } from "react";
 import { Topbar } from "@/components/app-shell/topbar";
 import { Badge, Button, Panel, PanelHeader } from "@/components/ui/primitives";
+import { useDemoBusiness } from "@/lib/demo-business";
 import { useI18n } from "@/lib/i18n";
 import { formatDate } from "@/lib/utils";
-import { location } from "@/mock";
 import { product } from "../../../../product.config";
 
 const apiKeys = [
@@ -16,6 +16,8 @@ const apiKeys = [
 
 export default function SettingsPage() {
   const { t } = useI18n();
+  const { business } = useDemoBusiness();
+  const { location } = business;
   const [copied, setCopied] = useState<string | null>(null);
 
   const copy = async (text: string, id: string) => {

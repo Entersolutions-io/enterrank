@@ -1,6 +1,9 @@
-import { paginated } from "@/lib/api-response";
-import { competitors } from "@/mock";
+import { businessScope, paginated } from "@/lib/api-response";
 
 export async function GET(request: Request) {
-  return paginated(competitors, new URL(request.url));
+  const url = new URL(request.url);
+  const scope = businessScope(url);
+  if (!scope.ok) return scope.response;
+
+  return paginated(scope.business.competitors, url);
 }

@@ -6,14 +6,17 @@ import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "rec
 import { Topbar } from "@/components/app-shell/topbar";
 import { CountUp, GeoGrid, GeoGridLegend } from "@/components/rankings/geo-grid";
 import { Badge, Button, Panel, PanelHeader } from "@/components/ui/primitives";
+import { useDemoBusiness } from "@/lib/demo-business";
 import { useI18n } from "@/lib/i18n";
-import { buildScan, keywords, keywordStats, scanHistory } from "@/mock";
+import { buildScan, keywordStats } from "@/mock";
 import { cn } from "@/lib/utils";
 
 const SCAN_MS = 2400;
 
 export default function RankingsPage() {
   const { t, pick } = useI18n();
+  const { business } = useDemoBusiness();
+  const { keywords, scanHistory } = business;
 
   const [keywordId, setKeywordId] = useState(keywords[0].id);
   const [size, setSize] = useState(7);
@@ -21,7 +24,13 @@ export default function RankingsPage() {
   const [scanning, setScanning] = useState(true);
   const [selected, setSelected] = useState<number | null>(null);
 
-  const scan = useMemo(() => buildScan(keywordId, size), [keywordId, size]);
+  // Falls back to the tenant's first term when the selected id belongs to a business the visitor
+  // has just switched away from.
+  const activeKeywordId = keywords.some((k) => k.id === keywordId) ? keywordId : keywords[0].id;
+  const scan = useMemo(
+    () => buildScan(business, activeKeywordId, size),
+    [business, activeKeywordId, size],
+  );
 
   const run = () => {
     setSelected(null);
@@ -79,7 +88,7 @@ export default function RankingsPage() {
                     disabled={scanning}
                     className={cn(
                       "rounded-lg border px-2.5 py-1 text-xs transition-colors disabled:opacity-50",
-                      keyword.id === keywordId
+                      keyword.id === activeKeywordId
                         ? "border-accent/40 bg-accent/10 text-accent-light"
                         : "border-line text-muted hover:border-line-strong hover:text-secondary",
                     )}
@@ -244,7 +253,7 @@ export default function RankingsPage() {
               </thead>
               <tbody className="divide-y divide-line">
                 {keywords.map((keyword) => {
-                  const stats = keywordStats(keyword.id);
+                  const stats = keywordStats(business, keyword.id);
                   return (
                   <tr
                     key={keyword.id}
@@ -254,7 +263,7 @@ export default function RankingsPage() {
                     }}
                     className={cn(
                       "cursor-pointer transition-colors hover:bg-white/[0.02]",
-                      keyword.id === keywordId && "bg-white/[0.03]",
+                      keyword.id === activeKeywordId && "bg-white/[0.03]",
                     )}
                   >
                     <td className="px-5 py-3 text-foreground">{pick(keyword.term)}</td>

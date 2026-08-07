@@ -9,7 +9,6 @@ import { useI18n } from "@/lib/i18n";
 import type { AiVisibilityProbe } from "@/lib/types";
 import { engines } from "@/mock";
 import { cn } from "@/lib/utils";
-import { location } from "@/mock";
 
 /**
  * Runs one AEO probe across every assistant and reveals the verdicts as they land.
@@ -22,11 +21,14 @@ export function ProbeRunner({
   probe,
   onProbeChange,
   probes,
+  city,
   compact = false,
 }: {
   probe: AiVisibilityProbe;
   probes: AiVisibilityProbe[];
   onProbeChange: (id: string) => void;
+  /** Assistants personalise by location, so the footnote names the city being asked from. */
+  city: string;
   compact?: boolean;
 }) {
   const { t, pick } = useI18n();
@@ -212,8 +214,8 @@ export function ProbeRunner({
 
       <p className="text-xs text-faint">
         {t(
-          `Asked as if from ${location.city}. Assistants personalise by location, so results differ per city.`,
-          `Pitano kao iz grada ${location.city}. Asistenti personaliziraju prema lokaciji pa se rezultati razlikuju po gradu.`,
+          `Asked as if from ${city}. Assistants personalise by location, so results differ per city.`,
+          `Pitano kao iz grada ${city}. Asistenti personaliziraju prema lokaciji pa se rezultati razlikuju po gradu.`,
         )}
       </p>
     </div>

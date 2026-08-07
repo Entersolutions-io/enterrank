@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { ButtonLink } from "@/components/ui/primitives";
 import { useI18n } from "@/lib/i18n";
-import { product } from "../../../product.config";
 
 const container = {
   hidden: {},
@@ -54,16 +53,9 @@ export function Hero() {
         animate="visible"
         className="relative z-10 mx-auto w-full max-w-4xl text-center"
       >
-        <motion.div variants={item}>
-          <span className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-xs text-secondary">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-            {t(product.tagline.en, product.tagline.hr)}
-          </span>
-        </motion.div>
-
         <motion.h1
           variants={item}
-          className="mt-7 text-balance text-4xl font-bold leading-[1.08] tracking-tight text-foreground md:text-6xl lg:text-[4.25rem]"
+          className="text-balance text-4xl font-bold leading-[1.08] tracking-tight text-foreground md:text-6xl lg:text-[4.25rem]"
           style={{ letterSpacing: "-0.03em" }}
         >
           {t("Your customers already asked.", "Vaši kupci su već pitali.")}
@@ -98,8 +90,8 @@ export function Hero() {
 
         <motion.p variants={item} className="mt-6 text-xs text-faint">
           {t(
-            "No account needed — the demo opens with a sample business.",
-            "Nije potreban račun — demo se otvara s primjerom poslovanja.",
+            "No account needed — pick one of five sample businesses and the demo opens on its data.",
+            "Nije potreban račun — odaberite jednu od pet primjera tvrtki i demo se otvara s njezinim podacima.",
           )}
         </motion.p>
       </motion.div>

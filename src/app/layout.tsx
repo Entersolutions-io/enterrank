@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { DemoBusinessProvider } from "@/lib/demo-business";
 import { I18nProvider } from "@/lib/i18n";
 import { product } from "../../product.config";
 import "./globals.css";
@@ -49,7 +50,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${mono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <I18nProvider>{children}</I18nProvider>
+        {/* Both providers wrap the whole site, so the business chosen on the landing page is
+            still selected inside /app. */}
+        <I18nProvider>
+          <DemoBusinessProvider>{children}</DemoBusinessProvider>
+        </I18nProvider>
       </body>
     </html>
   );

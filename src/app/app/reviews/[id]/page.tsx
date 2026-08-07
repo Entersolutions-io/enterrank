@@ -3,20 +3,33 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
+import { useEffect } from "react";
 import { Topbar } from "@/components/app-shell/topbar";
 import { ReplyComposer } from "@/components/reviews/reply-composer";
 import { Avatar, Badge, Panel, PanelHeader, Stars } from "@/components/ui/primitives";
+import { useDemoBusiness } from "@/lib/demo-business";
 import { useI18n } from "@/lib/i18n";
 import type { ReviewIntent } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
-import { reviews } from "@/mock";
+import { findReviewOwner } from "@/mock";
 
 export default function ReviewDetailPage() {
   const { t, pick } = useI18n();
+  const { businessId, setBusinessId } = useDemoBusiness();
   const params = useParams<{ id: string }>();
 
-  const review = reviews.find((r) => r.id === params.id);
-  if (!review) notFound();
+  // Resolved across every tenant rather than only the selected one, so a link to a review still
+  // opens after the visitor has switched business — the workspace follows the link instead of
+  // the link 404ing.
+  const owner = findReviewOwner(params.id);
+  const ownerId = owner?.business.id;
+
+  useEffect(() => {
+    if (ownerId && ownerId !== businessId) setBusinessId(ownerId);
+  }, [ownerId, businessId, setBusinessId]);
+
+  if (!owner) notFound();
+  const { business, review } = owner;
 
   const intentLabels: Record<ReviewIntent, string> = {
     praise: t("Praise", "Pohvala"),
@@ -69,7 +82,7 @@ export default function ReviewDetailPage() {
               </div>
             </Panel>
 
-            <ReplyComposer review={review} />
+            <ReplyComposer review={review} business={business} />
           </div>
 
           {/* Analysis sidebar */}

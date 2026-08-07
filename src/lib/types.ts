@@ -10,6 +10,9 @@
 export type Locale = "en" | "hr";
 export type Bilingual = { en: string; hr: string };
 
+/** The demo tenants a visitor can switch between. Each one is a complete, self-contained dataset. */
+export type BusinessId = "salon" | "market" | "autoparts" | "restaurant" | "gym";
+
 /* ── Locations ────────────────────────────────────────────────────────── */
 
 export interface Location {
@@ -78,6 +81,13 @@ export interface ReviewReply {
   publishedAt?: string;
   /** True when an auto-reply rule published this without human review. */
   automated: boolean;
+}
+
+/** An unpublished draft, as returned by `POST /reviews/{id}/reply`. */
+export interface ReplyDraft {
+  text: Bilingual;
+  keywords: string[];
+  seoScore: number;
 }
 
 /** The staged work the composer animates through while a draft is produced. */
@@ -254,6 +264,72 @@ export interface OverviewMetrics {
   profileScore: number;
   /** Weekly review volume split by sentiment, for the stacked chart. */
   reviewVolume: { date: string; positive: number; neutral: number; negative: number }[];
+}
+
+/** A concrete thing to do about AI visibility, derived from what the assistants cited. */
+export interface AeoAction {
+  id: string;
+  title: Bilingual;
+  detail: Bilingual;
+  impact: "high" | "medium" | "low";
+  effort: "low" | "medium" | "high";
+}
+
+/**
+ * The four corners of the brand-voice slider grid. The preview panel picks one of these so the
+ * sliders have a visible consequence instead of being decorative.
+ */
+export interface VoicePreview {
+  casualWarm: Bilingual;
+  casualConcise: Bilingual;
+  formalWarm: Bilingual;
+  formalConcise: Bilingual;
+}
+
+/* ── Demo tenants ─────────────────────────────────────────────────────── */
+
+/**
+ * One complete demo workspace.
+ *
+ * Everything the product renders for a tenant lives here, which is what makes the business
+ * switcher possible: swapping datasets swaps every screen at once, and no component holds a
+ * reference to a particular business. A production build would fetch this shape per workspace.
+ */
+export interface DemoBusiness {
+  id: BusinessId;
+  /** Sector label for the switcher chips. */
+  label: Bilingual;
+  /** One line on why this dataset is worth looking at — each business fails differently. */
+  story: Bilingual;
+  /** Lucide icon name, resolved by the switcher. */
+  icon: string;
+  /** Monogram for the workspace tile in the sidebar. */
+  initials: string;
+  /** Whose name sits on the account. */
+  ownerName: string;
+
+  location: Location;
+  competitors: Competitor[];
+  /** The written read of the competitor table — sector-specific, so it lives with the data. */
+  competitorNote: Bilingual;
+
+  reviews: Review[];
+  replyDrafts: Record<string, ReplyDraft>;
+
+  keywords: Keyword[];
+  scanHistory: { date: string; atrs: number }[];
+
+  probes: AiVisibilityProbe[];
+  aeoActions: AeoAction[];
+
+  brandVoice: BrandVoice;
+  voicePreview: VoicePreview;
+
+  profileChecks: ProfileCheck[];
+  posts: GbpPost[];
+  questions: GbpQuestion[];
+
+  overview: OverviewMetrics;
 }
 
 /* ── API envelope ─────────────────────────────────────────────────────── */

@@ -39,6 +39,23 @@ because a business that ranks well and never replies to a one-star review still 
 > Google Business Profile connection, and reply drafts come from fixtures rather than a model call.
 > See [Demo mode](#demo-mode).
 
+### Five sample businesses
+
+The demo carries five complete workspaces rather than one, switchable from the landing page and from
+the app sidebar. They are chosen so the product is seen diagnosing five different failures, because
+"we rank badly" is never the same problem twice:
+
+| `business` | Workspace | Where it breaks |
+|---|---|---|
+| `salon` | Studio Lucia — hair salon, Zagreb | Owns its colour searches, absent from half of what it sells |
+| `market` | Market Klas — grocery, Zagreb | Best rating on the street, weakest profile of the five |
+| `autoparts` | Auto Dijelovi Delta — car parts, Rijeka | Loses to a web shop that publishes part numbers |
+| `restaurant` | Konoba Fjaka — restaurant, Split | 500 reviews in four languages, replies take two days in season |
+| `gym` | Fit Centar Puls — gym, Zagreb | Cannot outspend chains on generic terms, and should stop trying |
+
+Every business, competitor, reviewer and quotation is invented. The browser remembers the selection in
+`localStorage`; API callers pass `?business=<id>`.
+
 ---
 
 ## What it does
@@ -77,8 +94,12 @@ src/
 │  ├─ ai-visibility/        Probe runner — shared the same way
 │  ├─ reviews/              Reply composer
 │  └─ docs/ legal/ ui/      Documentation parts, legal renderer, primitives
-├─ lib/                     types · i18n · api-response · utils
-├─ mock/                    The sample dataset
+│  └─ demo/                 Business switcher — cards, chips, workspace menu
+├─ lib/                     types · i18n · demo-business · api-response · utils
+├─ mock/
+│  ├─ businesses/           One file per demo tenant, plus the registry
+│  ├─ scan.ts               Deterministic geo-grid generator
+│  └─ shared.ts             Fixtures that belong to the product, not to a tenant
 └─ content/                 Legal copy
 product.config.ts           Name, domain, accent, pillars — the file that identifies this product
 ```
@@ -86,8 +107,13 @@ product.config.ts           Name, domain, accent, pillars — the file that iden
 ### Design decisions worth knowing
 
 **Grid scans are calibrated, not random.** `buildScan()` generates a deterministic heatmap from a
-keyword id, shaped so rankings decay outward from the business and calibrated so the mean position
-across the grid lands on the keyword's declared average. The table and the map can never disagree.
+tenant and keyword id, shaped so rankings decay outward from the business and calibrated so the mean
+position across the grid lands on the keyword's declared average. The table and the map can never
+disagree, and the same term always redraws identically after a business switch.
+
+**No component knows which business it is rendering.** Screens read the active tenant from
+`useDemoBusiness()`; the API resolves it from a query parameter. Adding a sixth workspace is one file
+in `src/mock/businesses/` and one line in its registry.
 
 **The reply composer never publishes on its own.** Replies below the configured star threshold, and
 any review where sentiment confidence is under 75%, always wait for a human. A misread complaint
@@ -121,13 +147,19 @@ npx tsc --noEmit     # typecheck
 Every endpoint documented at `/docs/api` is live and returns real JSON. Copy any example and run it:
 
 ```bash
+curl "http://localhost:3000/api/v1/locations"
 curl "http://localhost:3000/api/v1/scans?keyword_id=kw_02&size=7"
-curl "http://localhost:3000/api/v1/reviews?status=needs_reply"
+curl "http://localhost:3000/api/v1/reviews?business=restaurant&status=needs_reply"
 curl -X POST "http://localhost:3000/api/v1/reviews/rev_2f9a1/reply"
 ```
 
 List endpoints return a `{ data, meta }` envelope. Validation failures return `422` with
 `error.fields`. Write methods return `202 Accepted` without persisting.
+
+`business` selects the demo workspace and defaults to `salon`; an unrecognised value returns `422`
+rather than silently falling back. `GET /locations` lists all five with the id to pass. Review ids are
+unique across workspaces, so `/reviews/{id}` and its reply endpoint need no parameter. In production
+the workspace comes from the API key and the parameter disappears.
 
 ## Demo mode
 

@@ -4,10 +4,21 @@ import { CodeBlock, DocsNote, Endpoint, SectionHeader } from "@/components/docs/
 import { StaticPageLayout } from "@/components/layout/static-page-layout";
 import { Badge } from "@/components/ui/primitives";
 import { useI18n } from "@/lib/i18n";
+import { DEFAULT_BUSINESS_ID, businesses } from "@/mock";
 import { product } from "../../../../product.config";
 
 export default function ApiReferencePage() {
-  const { t } = useI18n();
+  const { t, pick } = useI18n();
+
+  /** Reused on every endpoint that reads tenant data, so the tables cannot drift apart. */
+  const businessParam = {
+    name: "business",
+    type: "string",
+    description: t(
+      `Demo only. ${businesses.map((b) => b.id).join(" · ")}. Defaults to ${DEFAULT_BUSINESS_ID}`,
+      `Samo u demou. ${businesses.map((b) => b.id).join(" · ")}. Zadano ${DEFAULT_BUSINESS_ID}`,
+    ),
+  };
 
   return (
     <StaticPageLayout>
@@ -59,6 +70,46 @@ export default function ApiReferencePage() {
             </p>
             <p className="font-mono text-sm text-foreground">JSON · UTF-8</p>
           </div>
+        </div>
+
+        {/* Demo workspaces */}
+        <SectionHeader id="workspaces" title={t("Demo workspaces", "Demo radni prostori")} />
+        <div className="rounded-xl border border-line bg-surface p-5">
+          <p className="mb-4 text-sm leading-relaxed text-secondary">
+            {t(
+              "This deployment carries five sample businesses instead of one, each with its own reviews, keywords, probes and profile signals. In production the workspace is determined by your API key; here you select it with a business query parameter. Omit it and you get the default workspace.",
+              "Ova instalacija nosi pet primjera tvrtki umjesto jedne, svaku s vlastitim recenzijama, ključnim riječima, provjerama i signalima profila. U produkciji radni prostor određuje vaš API ključ; ovdje ga birate parametrom upita business. Ako ga izostavite, dobivate zadani radni prostor.",
+            )}
+          </p>
+
+          <div className="mb-4 overflow-x-auto rounded-lg border border-line">
+            <table className="w-full min-w-[520px] text-xs">
+              <tbody className="divide-y divide-line">
+                {businesses.map((business) => (
+                  <tr key={business.id}>
+                    <td className="w-32 px-3 py-2 font-mono text-accent-light">{business.id}</td>
+                    <td className="px-3 py-2 text-foreground">{business.location.name}</td>
+                    <td className="px-3 py-2 text-muted">
+                      {pick(business.label)} · {business.location.city}
+                    </td>
+                    <td className="w-24 px-3 py-2 text-right font-mono text-muted">
+                      {business.location.id}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <CodeBlock>{`curl "${product.apiBaseUrl}/overview?business=restaurant" \\
+  -H "X-API-Key: ${product.apiKeyPrefix}live_your_key_here"`}</CodeBlock>
+
+          <p className="mt-4 text-xs leading-relaxed text-muted">
+            {t(
+              "Review ids are unique across workspaces, so /reviews/{id} and its reply endpoint resolve without the parameter. An unrecognised business value returns 422 rather than falling back to the default.",
+              "ID-jevi recenzija jedinstveni su među radnim prostorima pa se /reviews/{id} i pripadajući endpoint za odgovor razrješavaju bez parametra. Neprepoznata vrijednost parametra business vraća 422 umjesto da se vrati na zadano.",
+            )}
+          </p>
         </div>
 
         {/* Authentication */}
@@ -141,6 +192,7 @@ export default function ApiReferencePage() {
             "Prikazuje recenzije, najnovije prve.",
           )}
           params={[
+            businessParam,
             { name: "status", type: "string", description: "needs_reply · drafted · answered · ignored" },
             { name: "sentiment", type: "string", description: "positive · neutral · negative" },
             { name: "rating", type: "integer", description: "1–5" },
@@ -186,6 +238,7 @@ export default function ApiReferencePage() {
           response={`{
   "data": {
     "review_id": "rev_2f9a1",
+    "business": "salon",
     "text": { "en": "Marina, you are right and we are sorry...", "hr": "..." },
     "keywords": ["Ilica hair salon", "colour appointment"],
     "seo_score": 87,
@@ -220,6 +273,7 @@ export default function ApiReferencePage() {
           method="GET"
           path="/keywords"
           description={t("Lists tracked search terms.", "Prikazuje praćene pojmove pretraživanja.")}
+          params={[businessParam]}
           request={`curl "${product.apiBaseUrl}/keywords" \\
   -H "X-API-Key: ${product.apiKeyPrefix}live_your_key_here"`}
           response={`{
@@ -237,6 +291,7 @@ export default function ApiReferencePage() {
             "Pokreće geo-grid skeniranje za jednu ključnu riječ i vraća svaku uzorkovanu točku. rank je null gdje se tvrtka ne pojavljuje.",
           )}
           params={[
+            businessParam,
             { name: "keyword_id", type: "string", description: t("Required in practice; defaults to the first tracked term", "U praksi obavezno; zadano je prvi praćeni pojam") },
             { name: "size", type: "integer", description: t("Odd number 5–13. Grid is size × size", "Neparan broj 5–13. Mreža je size × size") },
             { name: "spacing_meters", type: "integer", description: "100–5000" },
@@ -271,6 +326,7 @@ export default function ApiReferencePage() {
             "Vraća praćene upite s presudom svakog asistenta, konkurentima spomenutima umjesto vas i citiranim izvorima.",
           )}
           params={[
+            businessParam,
             { name: "engine", type: "string", description: "chatgpt · gemini · perplexity · ai_overviews" },
           ]}
           request={`curl "${product.apiBaseUrl}/ai-visibility?engine=chatgpt" \\
@@ -307,12 +363,13 @@ export default function ApiReferencePage() {
             "Returns the weighted profile completeness score and the individual checks behind it.",
             "Vraća ponderiranu ocjenu potpunosti profila i pojedinačne provjere iza nje.",
           )}
+          params={[businessParam]}
           request={`curl "${product.apiBaseUrl}/presence/profile-score" \\
   -H "X-API-Key: ${product.apiKeyPrefix}live_your_key_here"`}
           response={`{
   "data": {
     "location_id": "loc_8f21c",
-    "score": 78,
+    "score": 61,
     "checks": [
       { "id": "chk_03", "weight": 14, "passed": false,
         "label": { "en": "All services listed with prices" } }
@@ -324,7 +381,10 @@ export default function ApiReferencePage() {
           method="GET"
           path="/presence/posts"
           description={t("Lists profile posts.", "Prikazuje objave na profilu.")}
-          params={[{ name: "status", type: "string", description: "draft · scheduled · published" }]}
+          params={[
+            businessParam,
+            { name: "status", type: "string", description: "draft · scheduled · published" },
+          ]}
           request={`curl "${product.apiBaseUrl}/presence/posts?status=published" \\
   -H "X-API-Key: ${product.apiKeyPrefix}live_your_key_here"`}
           response={`{
@@ -339,7 +399,10 @@ export default function ApiReferencePage() {
           method="GET"
           path="/presence/questions"
           description={t("Lists profile questions.", "Prikazuje pitanja na profilu.")}
-          params={[{ name: "unanswered", type: "boolean", description: t("true returns only unanswered questions", "true vraća samo neodgovorena pitanja") }]}
+          params={[
+            businessParam,
+            { name: "unanswered", type: "boolean", description: t("true returns only unanswered questions", "true vraća samo neodgovorena pitanja") },
+          ]}
           request={`curl "${product.apiBaseUrl}/presence/questions?unanswered=true" \\
   -H "X-API-Key: ${product.apiKeyPrefix}live_your_key_here"`}
           response={`{
@@ -357,6 +420,7 @@ export default function ApiReferencePage() {
           method="GET"
           path="/overview"
           description={t("Returns the dashboard metrics, including weekly series.", "Vraća metrike nadzorne ploče, uključujući tjedne serije.")}
+          params={[businessParam]}
           request={`curl "${product.apiBaseUrl}/overview" \\
   -H "X-API-Key: ${product.apiKeyPrefix}live_your_key_here"`}
           response={`{
@@ -366,28 +430,34 @@ export default function ApiReferencePage() {
     "rating": 4.6,
     "avgRank": 4.2,
     "aiVisibilityScore": 47,
-    "profileScore": 78
+    "profileScore": 61
   }
 }`}
         />
         <Endpoint
           method="GET"
           path="/locations"
-          description={t("Lists locations connected to the workspace.", "Prikazuje lokacije povezane s radnim prostorom.")}
+          description={t(
+            "Lists every location the key can see. In demo mode that is all five sample workspaces, each carrying the value to pass as business elsewhere.",
+            "Prikazuje sve lokacije koje ključ vidi. U demo načinu to je svih pet primjera radnih prostora, svaki s vrijednošću koja se drugdje prosljeđuje kao business.",
+          )}
           request={`curl "${product.apiBaseUrl}/locations" \\
   -H "X-API-Key: ${product.apiKeyPrefix}live_your_key_here"`}
           response={`{
   "data": [
-    { "id": "loc_8f21c", "name": "Studio Lucia", "city": "Zagreb",
-      "gbpLocationId": "locations/4192837465102938471", "rating": 4.6, "reviewCount": 218 }
+    { "id": "loc_8f21c", "demo_business": "salon", "name": "Studio Lucia", "city": "Zagreb",
+      "gbpLocationId": "locations/4192837465102938471", "rating": 4.6, "reviewCount": 218 },
+    { "id": "loc_9c78d", "demo_business": "restaurant", "name": "Konoba Fjaka", "city": "Split",
+      "gbpLocationId": "locations/8271039485762013948", "rating": 4.7, "reviewCount": 512 }
   ],
-  "meta": { "current_page": 1, "per_page": 25, "total": 1, "last_page": 1 }
+  "meta": { "current_page": 1, "per_page": 25, "total": 5, "last_page": 1 }
 }`}
         />
         <Endpoint
           method="GET"
           path="/competitors"
           description={t("Lists the tracked local competitor set.", "Prikazuje praćeni skup lokalne konkurencije.")}
+          params={[businessParam]}
           request={`curl "${product.apiBaseUrl}/competitors" \\
   -H "X-API-Key: ${product.apiKeyPrefix}live_your_key_here"`}
           response={`{

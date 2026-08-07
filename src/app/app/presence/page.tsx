@@ -4,13 +4,15 @@ import { Check, MessageCircleQuestion, X } from "lucide-react";
 import { useState } from "react";
 import { Topbar } from "@/components/app-shell/topbar";
 import { Badge, Button, Panel, PanelHeader } from "@/components/ui/primitives";
+import { useDemoBusiness } from "@/lib/demo-business";
 import { useI18n } from "@/lib/i18n";
 import type { PostStatus } from "@/lib/types";
 import { cn, daysAgo, formatDate } from "@/lib/utils";
-import { posts, profileChecks, questions } from "@/mock";
 
 export default function PresencePage() {
   const { t, pick } = useI18n();
+  const { business } = useDemoBusiness();
+  const { posts, profileChecks, questions } = business;
   const [tab, setTab] = useState<"health" | "posts" | "questions">("health");
 
   const earned = profileChecks.filter((c) => c.passed).reduce((s, c) => s + c.weight, 0);

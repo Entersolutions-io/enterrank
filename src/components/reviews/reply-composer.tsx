@@ -5,8 +5,8 @@ import { Check, Loader2, Send, Sparkles, RotateCcw } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Badge, Button } from "@/components/ui/primitives";
 import { useI18n } from "@/lib/i18n";
-import type { Review } from "@/lib/types";
-import { brandVoice, replyDrafts, replyStages } from "@/mock";
+import type { DemoBusiness, Review } from "@/lib/types";
+import { replyStages } from "@/mock";
 import { cn } from "@/lib/utils";
 
 type Phase = "idle" | "thinking" | "writing" | "published";
@@ -22,10 +22,17 @@ const REVEAL_MS = 1600;
  * word-by-word reveal makes the wait feel like authorship rather than a spinner, and the score
  * dial gives the operator a reason to accept or reject the draft rather than rubber-stamping it.
  */
-export function ReplyComposer({ review }: { review: Review }) {
+export function ReplyComposer({
+  review,
+  business,
+}: {
+  review: Review;
+  /** The tenant the review belongs to — supplies the pre-written draft and the brand voice. */
+  business: DemoBusiness;
+}) {
   const { t, pick } = useI18n();
 
-  const draft = replyDrafts[review.id] ?? review.reply;
+  const draft = business.replyDrafts[review.id] ?? review.reply;
   const alreadyPublished = review.status === "answered";
 
   const [phase, setPhase] = useState<Phase>(alreadyPublished ? "published" : "idle");
@@ -255,7 +262,7 @@ export function ReplyComposer({ review }: { review: Review }) {
                 </div>
 
                 <p className="mt-4 text-[11px] text-faint">
-                  {t("Voice", "Glas")}: {brandVoice.signature}
+                  {t("Voice", "Glas")}: {business.brandVoice.signature}
                 </p>
               </div>
 

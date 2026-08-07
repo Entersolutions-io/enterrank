@@ -2,12 +2,14 @@
 
 import { Topbar } from "@/components/app-shell/topbar";
 import { Badge, Panel, PanelHeader, Stars } from "@/components/ui/primitives";
+import { useDemoBusiness } from "@/lib/demo-business";
 import { useI18n } from "@/lib/i18n";
-import { competitors, location } from "@/mock";
 import { cn } from "@/lib/utils";
 
 export default function CompetitorsPage() {
-  const { t } = useI18n();
+  const { t, pick } = useI18n();
+  const { business } = useDemoBusiness();
+  const { competitors, competitorNote, location, overview } = business;
 
   // The business is shown inside its own competitor set — a ranked list you are not in is
   // just a list, and seeing your own row in position 3 is the point of the screen.
@@ -17,8 +19,8 @@ export default function CompetitorsPage() {
       name: location.name,
       rating: location.rating,
       reviewCount: location.reviewCount,
-      avgRank: 5.5,
-      aiVisibility: 47,
+      avgRank: overview.avgRank,
+      aiVisibility: overview.aiVisibilityScore,
       distanceMeters: 0,
       isYou: true,
     },
@@ -108,7 +110,7 @@ export default function CompetitorsPage() {
                             className="block h-full rounded-full"
                             style={{
                               width: `${row.aiVisibility}%`,
-                              background: row.isYou ? "#10b981" : "#52525b",
+                              background: row.isYou ? "var(--color-accent)" : "#52525b",
                             }}
                           />
                         </span>
@@ -132,10 +134,7 @@ export default function CompetitorsPage() {
             {t("Reading this table", "Čitanje ove tablice")}
           </h3>
           <p className="mt-2 max-w-3xl text-sm leading-relaxed text-secondary">
-            {t(
-              "Salon Adriana beats you on every column, and the gap is widest on review count — 412 against your 218. Review volume is the single strongest lever here, and it is the one you control directly. Hair Lab Zagreb is the more interesting threat: fewer reviews than you, but higher AI visibility, because their site publishes service pages that assistants can cite.",
-              "Salon Adriana vas nadmašuje u svakom stupcu, a razlika je najveća u broju recenzija — 412 naspram vaših 218. Količina recenzija ovdje je najjača poluga i jedina koju izravno kontrolirate. Hair Lab Zagreb je zanimljivija prijetnja: manje recenzija od vas, ali veća AI vidljivost, jer njihova stranica objavljuje stranice usluga koje asistenti mogu citirati.",
-            )}
+            {pick(competitorNote)}
           </p>
         </div>
       </div>
